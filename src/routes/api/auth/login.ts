@@ -18,7 +18,7 @@ export const Route = createFileRoute("/api/auth/login")({
               status: 500,
             });
 
-          const res = await db.query("SELECT password_hash FROM auth_users WHERE email = $1", [
+          const res = await db.query("SELECT password_hash FROM registered_users WHERE email = $1", [
             email,
           ]);
           if (res.rows.length === 0) {
