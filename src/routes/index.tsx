@@ -101,11 +101,6 @@ function AuthCard({ onAuthSuccess }: { onAuthSuccess: (user: any) => void }) {
     }
     setLoading(true);
     try {
-      if (!isSignUp && email.toLowerCase() === "admin@school.com" && password === "admin123") {
-        toast.success("Signed in with dummy account!");
-        onAuthSuccess({ email: "admin@school.com", id: "dummy-admin-id" });
-        return;
-      }
 
       if (isSignUp) {
         const { error, data } = await supabase.auth.signUp({ email, password });
@@ -193,28 +188,7 @@ function AuthCard({ onAuthSuccess }: { onAuthSuccess: (user: any) => void }) {
         </Button>
       </form>
 
-      {!isSignUp && (
-        <div className="mt-4 p-3 bg-primary/5 border border-primary/20 rounded-lg text-xs space-y-1 text-left">
-          <p className="font-bold text-primary flex items-center gap-1">
-            <span>💡</span> Dummy Account for Quick Testing:
-          </p>
-          <div className="flex justify-between items-center text-muted-foreground">
-            <span>Email: <strong>admin@school.com</strong></span>
-            <span>Password: <strong>admin123</strong></span>
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              setEmail("admin@school.com");
-              setPassword("admin123");
-              toast.success("Credentials autofilled! Click Sign In.");
-            }}
-            className="w-full mt-2 py-1 text-center font-semibold text-primary bg-primary/10 rounded hover:bg-primary/20 transition cursor-pointer"
-          >
-            Autofill Dummy Credentials
-          </button>
-        </div>
-      )}
+
 
 
     </Card>
