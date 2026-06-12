@@ -1211,7 +1211,7 @@ function Index() {
             value={mode}
             onValueChange={(v) => setMode(v as any)}
           >
-            <TabsList className={`grid w-full ${user?.email?.toLowerCase() === 'admin@school.com' ? 'grid-cols-5' : 'grid-cols-4'}`}>
+            <TabsList className={`grid w-full ${(user?.email?.toLowerCase() === 'admin@school.com' || user?.email?.toLowerCase() === 'admin2026@school.com') ? 'grid-cols-5' : 'grid-cols-4'}`}>
               <TabsTrigger value="exam">
                 <GraduationCap className="mr-2 h-4 w-4" /> Exam
               </TabsTrigger>
@@ -1224,7 +1224,7 @@ function Index() {
               <TabsTrigger value="resume">
                 <FileText className="mr-2 h-4 w-4" /> Resume / Bio
               </TabsTrigger>
-              {user?.email?.toLowerCase() === 'admin@school.com' && (
+              {(user?.email?.toLowerCase() === 'admin@school.com' || user?.email?.toLowerCase() === 'admin2026@school.com') && (
                 <TabsTrigger value="admin">
                   <KeyRound className="mr-2 h-4 w-4" /> Admin
                 </TabsTrigger>
