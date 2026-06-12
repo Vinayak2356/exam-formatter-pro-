@@ -11,6 +11,10 @@ export default defineConfig(({ mode }) => {
     envDefine[`import.meta.env.${key}`] = JSON.stringify(value);
   }
 
+  // Load all environment variables from .env into process.env for local server handlers
+  const allEnv = loadEnv(mode, process.cwd(), "");
+  Object.assign(process.env, allEnv);
+
   return {
     define: envDefine,
     resolve: {
