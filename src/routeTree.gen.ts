@@ -13,6 +13,7 @@ import { Route as SwaggerRouteImport } from './routes/swagger'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiPublicGenerateHhwRouteImport } from './routes/api/public/generate-hhw'
 import { Route as ApiPublicGenerateExamRouteImport } from './routes/api/public/generate-exam'
+import { Route as ApiAdminManageRouteImport } from './routes/api/admin/manage'
 
 const SwaggerRoute = SwaggerRouteImport.update({
   id: '/swagger',
@@ -34,16 +35,23 @@ const ApiPublicGenerateExamRoute = ApiPublicGenerateExamRouteImport.update({
   path: '/api/public/generate-exam',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAdminManageRoute = ApiAdminManageRouteImport.update({
+  id: '/api/admin/manage',
+  path: '/api/admin/manage',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/swagger': typeof SwaggerRoute
+  '/api/admin/manage': typeof ApiAdminManageRoute
   '/api/public/generate-exam': typeof ApiPublicGenerateExamRoute
   '/api/public/generate-hhw': typeof ApiPublicGenerateHhwRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/swagger': typeof SwaggerRoute
+  '/api/admin/manage': typeof ApiAdminManageRoute
   '/api/public/generate-exam': typeof ApiPublicGenerateExamRoute
   '/api/public/generate-hhw': typeof ApiPublicGenerateHhwRoute
 }
@@ -51,6 +59,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/swagger': typeof SwaggerRoute
+  '/api/admin/manage': typeof ApiAdminManageRoute
   '/api/public/generate-exam': typeof ApiPublicGenerateExamRoute
   '/api/public/generate-hhw': typeof ApiPublicGenerateHhwRoute
 }
@@ -59,18 +68,21 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/swagger'
+    | '/api/admin/manage'
     | '/api/public/generate-exam'
     | '/api/public/generate-hhw'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/swagger'
+    | '/api/admin/manage'
     | '/api/public/generate-exam'
     | '/api/public/generate-hhw'
   id:
     | '__root__'
     | '/'
     | '/swagger'
+    | '/api/admin/manage'
     | '/api/public/generate-exam'
     | '/api/public/generate-hhw'
   fileRoutesById: FileRoutesById
@@ -78,6 +90,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SwaggerRoute: typeof SwaggerRoute
+  ApiAdminManageRoute: typeof ApiAdminManageRoute
   ApiPublicGenerateExamRoute: typeof ApiPublicGenerateExamRoute
   ApiPublicGenerateHhwRoute: typeof ApiPublicGenerateHhwRoute
 }
@@ -112,12 +125,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicGenerateExamRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/manage': {
+      id: '/api/admin/manage'
+      path: '/api/admin/manage'
+      fullPath: '/api/admin/manage'
+      preLoaderRoute: typeof ApiAdminManageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SwaggerRoute: SwaggerRoute,
+  ApiAdminManageRoute: ApiAdminManageRoute,
   ApiPublicGenerateExamRoute: ApiPublicGenerateExamRoute,
   ApiPublicGenerateHhwRoute: ApiPublicGenerateHhwRoute,
 }

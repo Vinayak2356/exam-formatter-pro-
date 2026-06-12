@@ -90,7 +90,7 @@ const SUBJECT_PRESETS = [
 function AuthCard({ onAuthSuccess }: { onAuthSuccess: (user: any) => void }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isSignUp, setIsSignUp] = useState(false);
+  const isSignUp = false;
   const [loading, setLoading] = useState(false);
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -216,18 +216,7 @@ function AuthCard({ onAuthSuccess }: { onAuthSuccess: (user: any) => void }) {
         </div>
       )}
 
-      <div className="mt-6 text-center text-sm">
-        <span className="text-muted-foreground">
-          {isSignUp ? "Already have an account? " : "Don't have an account? "}
-        </span>
-        <button
-          type="button"
-          onClick={() => setIsSignUp(!isSignUp)}
-          className="font-medium text-primary hover:underline transition-colors focus:outline-none"
-        >
-          {isSignUp ? "Sign In" : "Sign Up"}
-        </button>
-      </div>
+
     </Card>
   );
 }
@@ -285,7 +274,78 @@ function Index() {
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [instructions, setInstructions] = useState("");
 
-  const [mode, setMode] = useState<"exam" | "hhw" | "timetable" | "resume">("exam");
+  const [mode, setMode] = useState<"exam" | "hhw" | "timetable" | "resume" | "admin">("exam");
+  const [logs, setLogs] = useState<any[]>([]);
+  const [addedUsers, setAddedUsers] = useState<any[]>([]);
+  const [newUserEmail, setNewUserEmail] = useState("");
+  const [newUserPassword, setNewUserPassword] = useState("");
+  const [adminLoading, setAdminLoading] = useState(false);
+
+  const fetchAdminData = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.access_token) return;
+    setAdminLoading(true);
+    try {
+      const logsRes = await fetch("/api/admin/manage?action=logs", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      const logsData = await logsRes.json();
+      setLogs(logsData.logs || []);
+
+      const usersRes = await fetch("/api/admin/manage?action=users", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      const usersData = await usersRes.json();
+      setAddedUsers(usersData.users || []);
+    } catch {
+      toast.error("Failed to load admin logs/users.");
+    } finally {
+      setAdminLoading(false);
+    }
+  };
+
+  const handleAddUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newUserEmail || !newUserPassword) {
+      toast.error("Please fill in email and password.");
+      return;
+    }
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.access_token) {
+      toast.error("Unauthorized. Please log in again.");
+      return;
+    }
+    setAdminLoading(true);
+    try {
+      const res = await fetch("/api/admin/manage", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ email: newUserEmail, password: newUserPassword }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to create user");
+      }
+      toast.success("User added successfully!");
+      setNewUserEmail("");
+      setNewUserPassword("");
+      fetchAdminData();
+    } catch (err: any) {
+      toast.error(err.message || "An error occurred");
+    } finally {
+      setAdminLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (mode === "admin") {
+      fetchAdminData();
+    }
+  }, [mode]);
+
   const [engine, setEngine] = useState<"ai" | "offline">("ai");
   const [loading, setLoading] = useState(false);
   const [paper, setPaper] = useState<ExamPaper | null>(null);
@@ -548,9 +608,14 @@ function Index() {
 
         // AI Engine (using API)
         try {
+          const { data: { session } } = await supabase.auth.getSession();
+          const headers: Record<string, string> = { "Content-Type": "application/json" };
+          if (session?.access_token) {
+            headers["Authorization"] = `Bearer ${session.access_token}`;
+          }
           const res = await fetch("/api/public/generate-exam", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers,
             body: JSON.stringify({
               schoolName,
               schoolAddress,
@@ -649,9 +714,14 @@ function Index() {
 
         // AI Engine (using API)
         try {
+          const { data: { session } } = await supabase.auth.getSession();
+          const headers: Record<string, string> = { "Content-Type": "application/json" };
+          if (session?.access_token) {
+            headers["Authorization"] = `Bearer ${session.access_token}`;
+          }
           const res = await fetch("/api/public/generate-hhw", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers,
             body: JSON.stringify({
               schoolName,
               schoolAddress,
@@ -1169,9 +1239,9 @@ function Index() {
         <Card className="p-5 space-y-5 no-print h-fit lg:sticky lg:top-6">
           <Tabs
             value={mode}
-            onValueChange={(v) => setMode(v as "exam" | "hhw" | "timetable" | "resume")}
+            onValueChange={(v) => setMode(v as any)}
           >
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className={`grid w-full ${user?.email?.toLowerCase() === 'admin@school.com' ? 'grid-cols-5' : 'grid-cols-4'}`}>
               <TabsTrigger value="exam">
                 <GraduationCap className="mr-2 h-4 w-4" /> Exam
               </TabsTrigger>
@@ -1184,9 +1254,14 @@ function Index() {
               <TabsTrigger value="resume">
                 <FileText className="mr-2 h-4 w-4" /> Resume / Bio
               </TabsTrigger>
+              {user?.email?.toLowerCase() === 'admin@school.com' && (
+                <TabsTrigger value="admin">
+                  <KeyRound className="mr-2 h-4 w-4" /> Admin
+                </TabsTrigger>
+              )}
             </TabsList>
 
-            {mode !== "timetable" && mode !== "resume" && (
+            {mode !== "timetable" && mode !== "resume" && mode !== "admin" && (
               <div className="mt-4 rounded-lg border bg-accent/30 p-2.5 space-y-1.5">
                 <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                   <span>Generation Engine</span>
@@ -1228,7 +1303,7 @@ function Index() {
             )}
 
             {/* Common header */}
-            {mode !== "timetable" && mode !== "resume" && (
+            {mode !== "timetable" && mode !== "resume" && mode !== "admin" && (
               <div className="space-y-3 mt-4">
                 <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                   School
@@ -2366,10 +2441,78 @@ function Index() {
                 )}
               </div>
             </TabsContent>
+
+            <TabsContent value="admin" className="space-y-4 mt-4">
+              <div className="space-y-3">
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
+                  <KeyRound className="h-4 w-4" /> Add User Account
+                </h2>
+                <p className="text-xs text-muted-foreground">
+                  Create a new user account. Only admin can register accounts.
+                </p>
+                <form onSubmit={handleAddUser} className="space-y-3">
+                  <div className="space-y-1">
+                    <Label htmlFor="new-user-email">Email Address</Label>
+                    <Input
+                      id="new-user-email"
+                      type="email"
+                      placeholder="teacher@school.com"
+                      value={newUserEmail}
+                      onChange={(e) => setNewUserEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="new-user-password">Password</Label>
+                    <Input
+                      id="new-user-password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={newUserPassword}
+                      onChange={(e) => setNewUserPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <Button type="submit" disabled={adminLoading} className="w-full">
+                    {adminLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Adding User…
+                      </>
+                    ) : (
+                      "Add User Account"
+                    )}
+                  </Button>
+                </form>
+              </div>
+
+              <div className="border-t pt-4 space-y-3">
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                  Registered Users ({addedUsers.length})
+                </h2>
+                {adminLoading && addedUsers.length === 0 ? (
+                  <div className="flex justify-center py-4">
+                    <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                  </div>
+                ) : addedUsers.length === 0 ? (
+                  <p className="text-xs text-muted-foreground italic">No users registered yet.</p>
+                ) : (
+                  <div className="space-y-2 max-h-[250px] overflow-y-auto pr-1">
+                    {addedUsers.map((usr, i) => (
+                      <div key={i} className="flex flex-col p-2.5 rounded-lg border bg-accent/20 text-xs">
+                        <span className="font-semibold text-foreground break-all">{usr.email}</span>
+                        <span className="text-[10px] text-muted-foreground mt-1">
+                          Added: {new Date(usr.createdAt).toLocaleString()}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </TabsContent>
           </Tabs>
 
           {/* Source */}
-          {mode !== "resume" && (
+          {mode !== "resume" && mode !== "admin" && (
             <div className="space-y-3 border-t pt-4">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                 Source Content
@@ -2403,10 +2546,11 @@ function Index() {
           )}
 
           {/* Design */}
-          <div className="space-y-3 border-t pt-4">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-              Design
-            </h2>
+          {mode !== "admin" && (
+            <div className="space-y-3 border-t pt-4">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                Design
+              </h2>
             <div className="space-y-2">
               <Label>{mode === "resume" ? "Your Photo / Logo" : "School Logo"}</Label>
               <div className="flex items-center gap-3">
@@ -2463,8 +2607,9 @@ function Index() {
               </div>
             </div>
           </div>
+          )}
 
-          {mode !== "resume" && (
+          {mode !== "resume" && mode !== "admin" && (
             <Button onClick={generate} disabled={loading} className="w-full" size="lg">
               {loading ? (
                 <>
@@ -3122,6 +3267,75 @@ function Index() {
                 footer={footer}
                 customConfig={customConfig}
               />
+            </div>
+          ) : mode === "admin" ? (
+            <div className="space-y-4 no-print">
+              <Card className="p-6">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 gap-4">
+                  <div>
+                    <h3 className="text-lg font-bold tracking-tight text-foreground flex items-center gap-2">
+                      📋 Activity & Audit Logs
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Real-time generation audit logs for exam papers and holiday homework.
+                    </p>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={fetchAdminData} disabled={adminLoading}>
+                    Refresh Logs
+                  </Button>
+                </div>
+
+                <div className="mt-4 space-y-4">
+                  {adminLoading && logs.length === 0 ? (
+                    <div className="flex justify-center py-12">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                  ) : logs.length === 0 ? (
+                    <div className="text-center py-12 text-muted-foreground">
+                      No logs found. Generating exams or homework will populate this audit trail.
+                    </div>
+                  ) : (
+                    <div className="border rounded-lg overflow-hidden">
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-xs text-left border-collapse">
+                          <thead>
+                            <tr className="bg-muted/50 border-b">
+                              <th className="p-3 font-semibold text-muted-foreground w-[180px]">Timestamp</th>
+                              <th className="p-3 font-semibold text-muted-foreground w-[200px]">User</th>
+                              <th className="p-3 font-semibold text-muted-foreground w-[120px]">Action</th>
+                              <th className="p-3 font-semibold text-muted-foreground">Details / Parameters</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y">
+                            {logs.map((log) => (
+                              <tr key={log.id} className="hover:bg-accent/20 transition-colors">
+                                <td className="p-3 font-medium whitespace-nowrap">
+                                  {new Date(log.timestamp).toLocaleString()}
+                                </td>
+                                <td className="p-3 font-medium text-foreground break-all">
+                                  {log.userEmail}
+                                </td>
+                                <td className="p-3">
+                                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium border ${
+                                    log.action?.includes("exam")
+                                      ? "bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/30 dark:text-indigo-400 dark:border-indigo-800"
+                                      : "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800"
+                                  }`}>
+                                    {log.action}
+                                  </span>
+                                </td>
+                                <td className="p-3 text-muted-foreground font-mono text-[11px] whitespace-pre-wrap break-all max-w-[400px]">
+                                  {log.details}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </Card>
             </div>
           ) : (
             <Card className="p-12 text-center text-muted-foreground no-print">

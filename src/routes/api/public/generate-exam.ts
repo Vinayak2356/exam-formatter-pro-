@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { generateExamOffline } from "@/lib/offline-generator";
+import { addLog } from "@/lib/logger.server";
+import { createClient } from "@supabase/supabase-js";
 
 type Body = {
   schoolName: string;
@@ -43,10 +45,35 @@ Rules:
 - Keep questions concise and relevant to the source.
 - Do NOT wrap output in json fences.`;
 
+async function getRequesterEmail(request: Request): Promise<string> {
+  const authHeader = request.headers.get("authorization");
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return "anonymous@school.com";
+  }
+  const token = authHeader.replace("Bearer ", "");
+  const SUPABASE_URL = process.env.SUPABASE_URL;
+  const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
+
+  if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+    return "anonymous@school.com";
+  }
+
+  try {
+    const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+      auth: { storage: undefined, persistSession: false },
+    });
+    const { data } = await supabase.auth.getClaims(token);
+    return data?.claims?.email || "anonymous@school.com";
+  } catch {
+    return "anonymous@school.com";
+  }
+}
+
 export const Route = createFileRoute("/api/public/generate-exam")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const userEmail = await getRequesterEmail(request);
         let body: Body;
         try {
           body = (await request.json()) as Body;
@@ -65,6 +92,7 @@ export const Route = createFileRoute("/api/public/generate-exam")({
             `[generate-exam] Generating offline. Reason: engine=${body.engine || "not-specified"}, key-present=${!!apiKey}`,
           );
           const paper = generateExamOffline(body);
+          await addLog(userEmail, "Generate Exam (Offline)", `${body.subject} - Class ${body.className} (${body.maxMarks} marks)`);
           return new Response(
             JSON.stringify({
               paper,
@@ -148,7 +176,7 @@ export const Route = createFileRoute("/api/public/generate-exam")({
           }
 
           const parsed = JSON.parse(raw);
-
+          await addLog(userEmail, "Generate Exam (AI)", `${body.subject} - Class ${body.className} (${body.maxMarks} marks)`);
           return new Response(
             JSON.stringify({
               paper: parsed,
@@ -172,6 +200,7 @@ export const Route = createFileRoute("/api/public/generate-exam")({
             errorMsg,
           );
           const paper = generateExamOffline(body);
+          await addLog(userEmail, "Generate Exam (AI Fallback)", `${body.subject} - Class ${body.className} (${body.maxMarks} marks) - Error: ${errorMsg}`);
           return new Response(
             JSON.stringify({
               paper,
