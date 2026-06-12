@@ -20,7 +20,7 @@ export type UserEntry = {
 
 let pool: Pool | null = null;
 
-function getPool(): Pool | null {
+export function getPool(): Pool | null {
   if (typeof window !== "undefined") return null; // Server only
   
   if (!pool) {
@@ -58,6 +58,14 @@ async function ensureTablesExist() {
     await db.query(`
       CREATE TABLE IF NOT EXISTS registered_users (
         email TEXT PRIMARY KEY,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `);
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS auth_users (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        email TEXT UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
     `);

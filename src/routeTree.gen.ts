@@ -13,6 +13,9 @@ import { Route as SwaggerRouteImport } from './routes/swagger'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiPublicGenerateHhwRouteImport } from './routes/api/public/generate-hhw'
 import { Route as ApiPublicGenerateExamRouteImport } from './routes/api/public/generate-exam'
+import { Route as ApiAuthSessionRouteImport } from './routes/api/auth/session'
+import { Route as ApiAuthRegisterRouteImport } from './routes/api/auth/register'
+import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
 import { Route as ApiAdminManageRouteImport } from './routes/api/admin/manage'
 
 const SwaggerRoute = SwaggerRouteImport.update({
@@ -35,6 +38,21 @@ const ApiPublicGenerateExamRoute = ApiPublicGenerateExamRouteImport.update({
   path: '/api/public/generate-exam',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAuthSessionRoute = ApiAuthSessionRouteImport.update({
+  id: '/api/auth/session',
+  path: '/api/auth/session',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthRegisterRoute = ApiAuthRegisterRouteImport.update({
+  id: '/api/auth/register',
+  path: '/api/auth/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthLoginRoute = ApiAuthLoginRouteImport.update({
+  id: '/api/auth/login',
+  path: '/api/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAdminManageRoute = ApiAdminManageRouteImport.update({
   id: '/api/admin/manage',
   path: '/api/admin/manage',
@@ -45,6 +63,9 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/swagger': typeof SwaggerRoute
   '/api/admin/manage': typeof ApiAdminManageRoute
+  '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/register': typeof ApiAuthRegisterRoute
+  '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/public/generate-exam': typeof ApiPublicGenerateExamRoute
   '/api/public/generate-hhw': typeof ApiPublicGenerateHhwRoute
 }
@@ -52,6 +73,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/swagger': typeof SwaggerRoute
   '/api/admin/manage': typeof ApiAdminManageRoute
+  '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/register': typeof ApiAuthRegisterRoute
+  '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/public/generate-exam': typeof ApiPublicGenerateExamRoute
   '/api/public/generate-hhw': typeof ApiPublicGenerateHhwRoute
 }
@@ -60,6 +84,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/swagger': typeof SwaggerRoute
   '/api/admin/manage': typeof ApiAdminManageRoute
+  '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/register': typeof ApiAuthRegisterRoute
+  '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/public/generate-exam': typeof ApiPublicGenerateExamRoute
   '/api/public/generate-hhw': typeof ApiPublicGenerateHhwRoute
 }
@@ -69,6 +96,9 @@ export interface FileRouteTypes {
     | '/'
     | '/swagger'
     | '/api/admin/manage'
+    | '/api/auth/login'
+    | '/api/auth/register'
+    | '/api/auth/session'
     | '/api/public/generate-exam'
     | '/api/public/generate-hhw'
   fileRoutesByTo: FileRoutesByTo
@@ -76,6 +106,9 @@ export interface FileRouteTypes {
     | '/'
     | '/swagger'
     | '/api/admin/manage'
+    | '/api/auth/login'
+    | '/api/auth/register'
+    | '/api/auth/session'
     | '/api/public/generate-exam'
     | '/api/public/generate-hhw'
   id:
@@ -83,6 +116,9 @@ export interface FileRouteTypes {
     | '/'
     | '/swagger'
     | '/api/admin/manage'
+    | '/api/auth/login'
+    | '/api/auth/register'
+    | '/api/auth/session'
     | '/api/public/generate-exam'
     | '/api/public/generate-hhw'
   fileRoutesById: FileRoutesById
@@ -91,6 +127,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SwaggerRoute: typeof SwaggerRoute
   ApiAdminManageRoute: typeof ApiAdminManageRoute
+  ApiAuthLoginRoute: typeof ApiAuthLoginRoute
+  ApiAuthRegisterRoute: typeof ApiAuthRegisterRoute
+  ApiAuthSessionRoute: typeof ApiAuthSessionRoute
   ApiPublicGenerateExamRoute: typeof ApiPublicGenerateExamRoute
   ApiPublicGenerateHhwRoute: typeof ApiPublicGenerateHhwRoute
 }
@@ -125,6 +164,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicGenerateExamRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/auth/session': {
+      id: '/api/auth/session'
+      path: '/api/auth/session'
+      fullPath: '/api/auth/session'
+      preLoaderRoute: typeof ApiAuthSessionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/register': {
+      id: '/api/auth/register'
+      path: '/api/auth/register'
+      fullPath: '/api/auth/register'
+      preLoaderRoute: typeof ApiAuthRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/login': {
+      id: '/api/auth/login'
+      path: '/api/auth/login'
+      fullPath: '/api/auth/login'
+      preLoaderRoute: typeof ApiAuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/admin/manage': {
       id: '/api/admin/manage'
       path: '/api/admin/manage'
@@ -139,6 +199,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SwaggerRoute: SwaggerRoute,
   ApiAdminManageRoute: ApiAdminManageRoute,
+  ApiAuthLoginRoute: ApiAuthLoginRoute,
+  ApiAuthRegisterRoute: ApiAuthRegisterRoute,
+  ApiAuthSessionRoute: ApiAuthSessionRoute,
   ApiPublicGenerateExamRoute: ApiPublicGenerateExamRoute,
   ApiPublicGenerateHhwRoute: ApiPublicGenerateHhwRoute,
 }

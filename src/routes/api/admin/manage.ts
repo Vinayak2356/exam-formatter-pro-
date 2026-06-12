@@ -1,6 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getLogs, getAddedUsers, addAddedUser } from "@/lib/logger.server";
-import { createClient } from "@supabase/supabase-js";
 
 async function verifyAdmin(request: Request) {
   const authHeader = request.headers.get("authorization");
@@ -9,23 +7,29 @@ async function verifyAdmin(request: Request) {
   }
 
   const token = authHeader.replace("Bearer ", "");
-  const SUPABASE_URL = process.env.SUPABASE_URL;
-  const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
+  const JWT_SECRET = process.env.JWT_SECRET;
 
-  if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+  if (!JWT_SECRET) {
     throw new Response(JSON.stringify({ error: "Server configuration missing" }), { status: 500 });
   }
 
-  const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-    auth: { storage: undefined, persistSession: false },
-  });
-
-  const { data, error } = await supabase.auth.getClaims(token);
-  if (error || !data?.claims || data.claims.email?.toLowerCase() !== "admin@school.com") {
-    throw new Response(JSON.stringify({ error: "Unauthorized: Admin access required" }), { status: 401 });
+  try {
+    const decoded = (await import("jsonwebtoken")).default.verify(token, JWT_SECRET) as {
+      email: string;
+    };
+    // We allow either admin@school.com or admin2026@school.com for admin access
+    if (
+      decoded.email?.toLowerCase() !== "admin@school.com" &&
+      decoded.email?.toLowerCase() !== "admin2026@school.com"
+    ) {
+      throw new Response(JSON.stringify({ error: "Unauthorized: Admin access required" }), {
+        status: 401,
+      });
+    }
+    return { email: decoded.email };
+  } catch {
+    throw new Response(JSON.stringify({ error: "Unauthorized: Invalid token" }), { status: 401 });
   }
-
-  return { email: data.claims.email };
 }
 
 export const Route = createFileRoute("/api/admin/manage")({
@@ -38,14 +42,14 @@ export const Route = createFileRoute("/api/admin/manage")({
           const action = url.searchParams.get("action");
 
           if (action === "logs") {
-            const logs = await getLogs();
+            const logs = await (await import("@/lib/logger.server")).getLogs();
             return new Response(JSON.stringify({ logs }), {
               headers: { "Content-Type": "application/json" },
             });
           }
 
           if (action === "users") {
-            const users = await getAddedUsers();
+            const users = await (await import("@/lib/logger.server")).getAddedUsers();
             return new Response(JSON.stringify({ users }), {
               headers: { "Content-Type": "application/json" },
             });
@@ -77,34 +81,36 @@ export const Route = createFileRoute("/api/admin/manage")({
             });
           }
 
-          const SUPABASE_URL = process.env.SUPABASE_URL;
-          const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
-
-          // Secondary client ensures the admin's session remains untouched
-          const secondarySupabase = createClient(SUPABASE_URL!, SUPABASE_PUBLISHABLE_KEY!, {
-            auth: {
-              persistSession: false,
-              autoRefreshToken: false,
-              detectSessionInUrl: false,
-            },
-          });
-
-          const { data, error } = await secondarySupabase.auth.signUp({
-            email,
-            password,
-          });
-
-          if (error) {
-            return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+          const db = (await import("@/lib/logger.server")).getPool();
+          if (!db) {
+            return new Response(JSON.stringify({ error: "Database not available" }), {
+              status: 500,
+            });
           }
 
-          // Register in local users list
-          await addAddedUser(email);
+          const passwordHash = await (await import("bcryptjs")).default.hash(password, 10);
+
+          try {
+            await db.query("INSERT INTO auth_users (email, password_hash) VALUES ($1, $2)", [
+              email,
+              passwordHash,
+            ]);
+          } catch (err: any) {
+            if (err.code === "23505") {
+              return new Response(JSON.stringify({ error: "Email already exists" }), {
+                status: 400,
+              });
+            }
+            throw err;
+          }
+
+          // Register in local users list for the dashboard logging
+          await (await import("@/lib/logger.server")).addAddedUser(email);
 
           return new Response(
             JSON.stringify({
               success: true,
-              user: data.user,
+              user: { email },
             }),
             { headers: { "Content-Type": "application/json" } },
           );

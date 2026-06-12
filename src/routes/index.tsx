@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useRef, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -101,23 +100,23 @@ function AuthCard({ onAuthSuccess }: { onAuthSuccess: (user: any) => void }) {
     }
     setLoading(true);
     try {
+      const endpoint = isSignUp ? "/api/auth/register" : "/api/auth/login";
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || "Authentication failed");
+      }
 
-      if (isSignUp) {
-        const { error, data } = await supabase.auth.signUp({ email, password });
-        if (error) throw error;
-        if (data?.session) {
-          toast.success("Account created and signed in successfully!");
-          onAuthSuccess(data.session.user);
-        } else {
-          toast.success("Registration successful! Please check your email for the confirmation link.");
-        }
-      } else {
-        const { error, data } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        toast.success("Signed in successfully!");
-        if (data?.user) {
-          onAuthSuccess(data.user);
-        }
+      if (data.session) {
+        // Store token in localStorage
+        localStorage.setItem("auth_token", data.session.access_token);
+        toast.success(isSignUp ? "Account created and signed in successfully!" : "Signed in successfully!");
+        onAuthSuccess(data.session.user);
       }
     } catch (err: any) {
       toast.error(err.message || "Authentication failed");
@@ -187,10 +186,6 @@ function AuthCard({ onAuthSuccess }: { onAuthSuccess: (user: any) => void }) {
           )}
         </Button>
       </form>
-
-
-
-
     </Card>
   );
 }
@@ -200,19 +195,20 @@ function Index() {
   const [authLoading, setAuthLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
+    const token = localStorage.getItem("auth_token");
+    if (token) {
+      fetch("/api/auth/session", {
+        headers: { "Authorization": `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        setUser(data.session?.user ?? null);
+        setAuthLoading(false);
+      })
+      .catch(() => setAuthLoading(false));
+    } else {
       setAuthLoading(false);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setAuthLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    }
   }, []);
 
   // Shared header
@@ -256,18 +252,18 @@ function Index() {
   const [adminLoading, setAdminLoading] = useState(false);
 
   const fetchAdminData = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.access_token) return;
+    const token = localStorage.getItem("auth_token");
+    if (!token) return;
     setAdminLoading(true);
     try {
       const logsRes = await fetch("/api/admin/manage?action=logs", {
-        headers: { Authorization: `Bearer ${session.access_token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       const logsData = await logsRes.json();
       setLogs(logsData.logs || []);
 
       const usersRes = await fetch("/api/admin/manage?action=users", {
-        headers: { Authorization: `Bearer ${session.access_token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       const usersData = await usersRes.json();
       setAddedUsers(usersData.users || []);
@@ -284,8 +280,8 @@ function Index() {
       toast.error("Please fill in email and password.");
       return;
     }
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.access_token) {
+    const token = localStorage.getItem("auth_token");
+    if (!token) {
       toast.error("Unauthorized. Please log in again.");
       return;
     }
@@ -295,7 +291,7 @@ function Index() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ email: newUserEmail, password: newUserPassword }),
       });
@@ -582,10 +578,10 @@ function Index() {
 
         // AI Engine (using API)
         try {
-          const { data: { session } } = await supabase.auth.getSession();
+          const token = localStorage.getItem("auth_token");
           const headers: Record<string, string> = { "Content-Type": "application/json" };
-          if (session?.access_token) {
-            headers["Authorization"] = `Bearer ${session.access_token}`;
+          if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
           }
           const res = await fetch("/api/public/generate-exam", {
             method: "POST",
@@ -688,10 +684,10 @@ function Index() {
 
         // AI Engine (using API)
         try {
-          const { data: { session } } = await supabase.auth.getSession();
+          const token = localStorage.getItem("auth_token");
           const headers: Record<string, string> = { "Content-Type": "application/json" };
-          if (session?.access_token) {
-            headers["Authorization"] = `Bearer ${session.access_token}`;
+          if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
           }
           const res = await fetch("/api/public/generate-hhw", {
             method: "POST",
@@ -1196,8 +1192,8 @@ function Index() {
             <Button
               variant="outline"
               size="sm"
-              onClick={async () => {
-                await supabase.auth.signOut();
+              onClick={() => {
+                localStorage.removeItem("auth_token");
                 setUser(null);
                 toast.success("Signed out successfully!");
               }}

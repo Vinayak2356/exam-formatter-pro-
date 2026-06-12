@@ -1,7 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { generateHHWOffline } from "@/lib/offline-generator";
-import { addLog } from "@/lib/logger.server";
-import { createClient } from "@supabase/supabase-js";
 
 type Body = {
   schoolName: string;
@@ -50,19 +48,17 @@ async function getRequesterEmail(request: Request): Promise<string> {
     return "anonymous@school.com";
   }
   const token = authHeader.replace("Bearer ", "");
-  const SUPABASE_URL = process.env.SUPABASE_URL;
-  const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
+  const JWT_SECRET = process.env.JWT_SECRET;
 
-  if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+  if (!JWT_SECRET) {
     return "anonymous@school.com";
   }
 
   try {
-    const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-      auth: { storage: undefined, persistSession: false },
-    });
-    const { data } = await supabase.auth.getClaims(token);
-    return data?.claims?.email || "anonymous@school.com";
+    const decoded = (await import("jsonwebtoken")).default.verify(token, JWT_SECRET) as {
+      email: string;
+    };
+    return decoded.email || "anonymous@school.com";
   } catch {
     return "anonymous@school.com";
   }
@@ -91,7 +87,13 @@ export const Route = createFileRoute("/api/public/generate-hhw")({
             `[generate-hhw] Generating offline. Reason: engine=${body.engine || "not-specified"}, key-present=${!!apiKey}`,
           );
           const packet = generateHHWOffline(body);
-          await addLog(userEmail, "Generate HHW (Offline)", `Subjects: ${body.subjects.join(", ")} - Class ${body.className}`);
+          await (
+            await import("@/lib/logger.server")
+          ).addLog(
+            userEmail,
+            "Generate HHW (Offline)",
+            `Subjects: ${body.subjects.join(", ")} - Class ${body.className}`,
+          );
           return new Response(
             JSON.stringify({
               packet,
@@ -165,7 +167,13 @@ export const Route = createFileRoute("/api/public/generate-hhw")({
           }
 
           const parsed = JSON.parse(raw);
-          await addLog(userEmail, "Generate HHW (AI)", `Subjects: ${body.subjects.join(", ")} - Class ${body.className}`);
+          await (
+            await import("@/lib/logger.server")
+          ).addLog(
+            userEmail,
+            "Generate HHW (AI)",
+            `Subjects: ${body.subjects.join(", ")} - Class ${body.className}`,
+          );
 
           return new Response(
             JSON.stringify({
@@ -187,7 +195,13 @@ export const Route = createFileRoute("/api/public/generate-hhw")({
             errorMsg,
           );
           const packet = generateHHWOffline(body);
-          await addLog(userEmail, "Generate HHW (AI Fallback)", `Subjects: ${body.subjects.join(", ")} - Class ${body.className} - Error: ${errorMsg}`);
+          await (
+            await import("@/lib/logger.server")
+          ).addLog(
+            userEmail,
+            "Generate HHW (AI Fallback)",
+            `Subjects: ${body.subjects.join(", ")} - Class ${body.className} - Error: ${errorMsg}`,
+          );
           return new Response(
             JSON.stringify({
               packet,
