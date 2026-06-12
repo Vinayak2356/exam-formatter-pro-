@@ -61,16 +61,26 @@ async function ensureTablesExist() {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
     `);
+    
+    // Add password_hash column if it doesn't exist (in case table was created previously)
     await db.query(`
-      CREATE TABLE IF NOT EXISTS auth_users (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        email TEXT UNIQUE NOT NULL,
-        password_hash TEXT NOT NULL,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-      );
+      ALTER TABLE registered_users 
+      ADD COLUMN IF NOT EXISTS password_hash TEXT;
     `);
+
+    // Auto-seed the admin user
+    await db.query(`
+      INSERT INTO registered_users (email, created_at, password_hash) 
+      VALUES (
+          'admin2026@school.com', 
+          NOW(), 
+          '$2b$10$8FRlR3eCjlMp2qmKfOKZ4eE16Ca9nCDkFSHPc7/4IEayaIdo9E54G'
+      )
+      ON CONFLICT (email) DO NOTHING;
+    `);
+
     initialized = true;
-    console.log("[Postgres] Tables initialized successfully.");
+    console.log("[Postgres] Tables initialized and admin seeded successfully.");
   } catch (err) {
     console.error("[Postgres] Table initialization failed:", err);
   }
