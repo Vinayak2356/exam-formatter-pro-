@@ -12,11 +12,15 @@ export const Route = createFileRoute("/api/auth/register")({
             });
           }
 
-          const db = (await import("@/lib/logger.server")).getPool();
+          const logger = await import("@/lib/logger.server");
+          const db = logger.getPool();
           if (!db)
             return new Response(JSON.stringify({ error: "Database not available" }), {
               status: 500,
             });
+
+          // Ensure tables exist before registering
+          await logger.ensureTablesExist();
 
           const passwordHash = await (await import("bcryptjs")).default.hash(password, 10);
 

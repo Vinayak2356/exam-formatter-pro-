@@ -12,11 +12,15 @@ export const Route = createFileRoute("/api/auth/login")({
             });
           }
 
-          const db = (await import("@/lib/logger.server")).getPool();
+          const logger = await import("@/lib/logger.server");
+          const db = logger.getPool();
           if (!db)
             return new Response(JSON.stringify({ error: "Database not available" }), {
               status: 500,
             });
+
+          // Ensure tables exist and admin is seeded before logging in
+          await logger.ensureTablesExist();
 
           const res = await db.query("SELECT password_hash FROM registered_users WHERE email = $1", [
             email,

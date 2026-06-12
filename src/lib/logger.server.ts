@@ -40,7 +40,7 @@ export function getPool(): Pool | null {
 }
 
 let initialized = false;
-async function ensureTablesExist() {
+export async function ensureTablesExist() {
   if (initialized) return;
   const db = getPool();
   if (!db) return;
