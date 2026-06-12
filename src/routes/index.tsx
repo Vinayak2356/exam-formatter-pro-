@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -55,6 +56,9 @@ import {
   CalendarClock,
   Plus,
   Trash2,
+  KeyRound,
+  Mail,
+  LogOut,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -83,7 +87,142 @@ const SUBJECT_PRESETS = [
   "Sanskrit",
 ];
 
+function AuthCard({ onAuthSuccess }: { onAuthSuccess: (user: any) => void }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) {
+      toast.error("Please fill in all fields.");
+      return;
+    }
+    setLoading(true);
+    try {
+      if (isSignUp) {
+        const { error, data } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+        if (data?.session) {
+          toast.success("Account created and signed in successfully!");
+          onAuthSuccess(data.session.user);
+        } else {
+          toast.success("Registration successful! Please check your email for the confirmation link.");
+        }
+      } else {
+        const { error, data } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        toast.success("Signed in successfully!");
+        if (data?.user) {
+          onAuthSuccess(data.user);
+        }
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Authentication failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Card className="w-full max-w-md p-6 sm:p-8 shadow-xl border border-border/50 bg-card/85 backdrop-blur-md">
+      <div className="flex flex-col space-y-2 text-center">
+        <div className="flex justify-center mb-2">
+          <div className="p-3 bg-primary/10 rounded-2xl">
+            <GraduationCap className="h-8 w-8 text-primary animate-pulse" />
+          </div>
+        </div>
+        <h2 className="text-2xl font-bold tracking-tight text-foreground">
+          {isSignUp ? "Create your account" : "Welcome back"}
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          {isSignUp
+            ? "Enter your email below to register for Exam Formatter Pro"
+            : "Sign in to access your dashboard and templates"}
+        </p>
+      </div>
+
+      <form onSubmit={handleAuth} className="mt-6 space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="email">Email address</Label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-3 h-4.5 w-4.5 text-muted-foreground" />
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@school.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="pl-10"
+              required
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="password">Password</Label>
+          <div className="relative">
+            <KeyRound className="absolute left-3 top-3 h-4.5 w-4.5 text-muted-foreground" />
+            <Input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="pl-10"
+              required
+            />
+          </div>
+        </div>
+
+        <Button type="submit" className="w-full mt-2" disabled={loading}>
+          {loading ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : isSignUp ? (
+            "Sign Up"
+          ) : (
+            "Sign In"
+          )}
+        </Button>
+      </form>
+
+      <div className="mt-6 text-center text-sm">
+        <span className="text-muted-foreground">
+          {isSignUp ? "Already have an account? " : "Don't have an account? "}
+        </span>
+        <button
+          type="button"
+          onClick={() => setIsSignUp(!isSignUp)}
+          className="font-medium text-primary hover:underline transition-colors focus:outline-none"
+        >
+          {isSignUp ? "Sign In" : "Sign Up"}
+        </button>
+      </div>
+    </Card>
+  );
+}
+
 function Index() {
+  const [user, setUser] = useState<any>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setAuthLoading(false);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setAuthLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   // Shared header
   const [schoolName, setSchoolName] = useState("MERRY CITY SCHOOL & HOSTEL");
   const [schoolAddress, setSchoolAddress] = useState("NARAYANPUR NEAR BYPASS DAFI VARANASI");
@@ -919,6 +1058,38 @@ function Index() {
       : [],
   };
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <Toaster />
+        <header className="border-b bg-card">
+          <div className="mx-auto max-w-7xl px-6 py-5 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <FileText className="h-6 w-6 text-primary" />
+              <div>
+                <h1 className="text-lg font-semibold">Exam · Holiday Homework · Time Table Maker</h1>
+                <p className="text-xs text-muted-foreground">
+                  Premium school templates — print, PDF, or DOCX.
+                </p>
+              </div>
+            </div>
+          </div>
+        </header>
+        <div className="flex-1 flex items-center justify-center p-6 bg-slate-50 dark:bg-slate-900/50">
+          <AuthCard onAuthSuccess={(usr) => setUser(usr)} />
+        </div>
+      </div>
+    );
+  }
+
   const hasOutput =
     (mode === "exam" && paper && examHdr) ||
     (mode === "hhw" && packet && hhwHdr) ||
@@ -939,13 +1110,28 @@ function Index() {
               </p>
             </div>
           </div>
-          <div>
+          <div className="flex items-center gap-3">
+            <span className="hidden sm:inline text-xs text-muted-foreground font-medium bg-accent px-2.5 py-1.5 rounded-md">
+              👤 {user.email}
+            </span>
             <Link
               to="/swagger"
               className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-indigo-500/20 bg-indigo-500/10 px-4 py-2 text-xs font-bold text-indigo-600 transition hover:bg-indigo-500/20 active:scale-95 dark:text-indigo-400"
             >
               🔌 API Reference Docs
             </Link>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={async () => {
+                await supabase.auth.signOut();
+                setUser(null);
+                toast.success("Signed out successfully!");
+              }}
+              className="flex items-center gap-1.5 text-xs text-destructive border-destructive/20 hover:bg-destructive/10 hover:text-destructive active:scale-95 transition"
+            >
+              <LogOut className="h-3.5 w-3.5" /> Sign Out
+            </Button>
           </div>
         </div>
       </header>
