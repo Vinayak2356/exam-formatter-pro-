@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { CKEditor } from "ckeditor4-react";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -250,6 +251,8 @@ function Index() {
   const [newUserEmail, setNewUserEmail] = useState("");
   const [newUserPassword, setNewUserPassword] = useState("");
   const [adminLoading, setAdminLoading] = useState(false);
+  const [editUserEmail, setEditUserEmail] = useState<string | null>(null);
+  const [editUserPassword, setEditUserPassword] = useState("");
 
   const fetchAdminData = async () => {
     const token = localStorage.getItem("auth_token");
@@ -305,6 +308,51 @@ function Index() {
       fetchAdminData();
     } catch (err: any) {
       toast.error(err.message || "An error occurred");
+    } finally {
+      setAdminLoading(false);
+    }
+  };
+
+  const handleDeleteUser = async (emailToDelete: string) => {
+    if (!confirm(`Are you sure you want to delete ${emailToDelete}?`)) return;
+    const token = localStorage.getItem("auth_token");
+    setAdminLoading(true);
+    try {
+      const res = await fetch(`/api/admin/manage?email=${encodeURIComponent(emailToDelete)}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to delete user");
+      toast.success("User deleted successfully!");
+      fetchAdminData();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete user");
+    } finally {
+      setAdminLoading(false);
+    }
+  };
+
+  const handleUpdateUser = async (emailToUpdate: string) => {
+    if (!editUserPassword) {
+      toast.error("Please enter a new password");
+      return;
+    }
+    const token = localStorage.getItem("auth_token");
+    setAdminLoading(true);
+    try {
+      const res = await fetch("/api/admin/manage", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ email: emailToUpdate, password: editUserPassword })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to update user");
+      toast.success("User updated successfully!");
+      setEditUserEmail(null);
+      setEditUserPassword("");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update user");
     } finally {
       setAdminLoading(false);
     }
@@ -2469,10 +2517,30 @@ function Index() {
                   <div className="space-y-2 max-h-[250px] overflow-y-auto pr-1">
                     {addedUsers.map((usr, i) => (
                       <div key={i} className="flex flex-col p-2.5 rounded-lg border bg-accent/20 text-xs">
-                        <span className="font-semibold text-foreground break-all">{usr.email}</span>
-                        <span className="text-[10px] text-muted-foreground mt-1">
-                          Added: {new Date(usr.createdAt).toLocaleString()}
-                        </span>
+                        <div className="flex justify-between items-start">
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-foreground break-all">{usr.email}</span>
+                            <span className="text-[10px] text-muted-foreground mt-1">
+                              Added: {new Date(usr.createdAt).toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="flex gap-1">
+                            <Button size="sm" variant="ghost" className="h-6 px-2 text-[10px]" onClick={() => { setEditUserEmail(editUserEmail === usr.email ? null : usr.email); setEditUserPassword(""); }}>Edit</Button>
+                            <Button size="sm" variant="ghost" className="h-6 px-2 text-[10px] text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => handleDeleteUser(usr.email)}><Trash2 className="h-3 w-3" /></Button>
+                          </div>
+                        </div>
+                        {editUserEmail === usr.email && (
+                          <div className="mt-2 pt-2 border-t flex gap-2">
+                            <Input
+                              type="password"
+                              placeholder="New password"
+                              className="h-7 text-xs flex-1"
+                              value={editUserPassword}
+                              onChange={(e) => setEditUserPassword(e.target.value)}
+                            />
+                            <Button size="sm" className="h-7 text-xs" onClick={() => handleUpdateUser(usr.email)}>Save</Button>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -2489,12 +2557,12 @@ function Index() {
               </h2>
               <div className="space-y-2">
                 <Label>Source Text (chapter / syllabus / topics)</Label>
-                <Textarea
-                  rows={5}
-                  value={sourceText}
-                  onChange={(e) => setSourceText(e.target.value)}
-                  placeholder="Paste the syllabus or topics to base the homework / questions on…"
-                />
+                <div className="border rounded-md overflow-hidden bg-white">
+                  <CKEditor
+                    initData={sourceText}
+                    onChange={(e: any) => setSourceText(e.editor.getData())}
+                  />
+                </div>
               </div>
               <div className="space-y-2">
                 <Label>Website URL (optional)</Label>
@@ -2506,11 +2574,12 @@ function Index() {
               </div>
               <div className="space-y-2">
                 <Label>Extra Instructions (optional)</Label>
-                <Textarea
-                  rows={2}
-                  value={instructions}
-                  onChange={(e) => setInstructions(e.target.value)}
-                />
+                <div className="border rounded-md overflow-hidden bg-white">
+                  <CKEditor
+                    initData={instructions}
+                    onChange={(e: any) => setInstructions(e.editor.getData())}
+                  />
+                </div>
               </div>
             </div>
           )}

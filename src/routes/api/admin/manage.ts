@@ -91,7 +91,7 @@ export const Route = createFileRoute("/api/admin/manage")({
           const passwordHash = await (await import("bcryptjs")).default.hash(password, 10);
 
           try {
-            await db.query("INSERT INTO auth_users (email, password_hash) VALUES ($1, $2)", [
+            await db.query("INSERT INTO registered_users (email, password_hash) VALUES ($1, $2)", [
               email,
               passwordHash,
             ]);
@@ -119,6 +119,57 @@ export const Route = createFileRoute("/api/admin/manage")({
           return new Response(JSON.stringify({ error: err.message || "Server error" }), {
             status: 500,
           });
+        }
+      },
+      DELETE: async ({ request }) => {
+        try {
+          const { email: adminEmail } = await verifyAdmin(request);
+          const url = new URL(request.url);
+          const emailToDelete = url.searchParams.get("email");
+
+          if (!emailToDelete) {
+            return new Response(JSON.stringify({ error: "Email is required" }), { status: 400 });
+          }
+
+          if (emailToDelete.toLowerCase() === "admin@school.com" || emailToDelete.toLowerCase() === "admin2026@school.com") {
+             return new Response(JSON.stringify({ error: "Cannot delete master admin accounts" }), { status: 403 });
+          }
+
+          const db = (await import("@/lib/logger.server")).getPool();
+          if (!db) return new Response(JSON.stringify({ error: "DB error" }), { status: 500 });
+
+          await db.query("DELETE FROM registered_users WHERE email = $1", [emailToDelete]);
+
+          return new Response(JSON.stringify({ success: true }), { headers: { "Content-Type": "application/json" } });
+        } catch (err: any) {
+          if (err instanceof Response) return err;
+          return new Response(JSON.stringify({ error: err.message || "Server error" }), { status: 500 });
+        }
+      },
+      PUT: async ({ request }) => {
+        try {
+          await verifyAdmin(request);
+          const body = await request.json();
+          const { email, password } = body;
+
+          if (!email || !password) {
+            return new Response(JSON.stringify({ error: "Email and new password required" }), { status: 400 });
+          }
+
+          const db = (await import("@/lib/logger.server")).getPool();
+          if (!db) return new Response(JSON.stringify({ error: "DB error" }), { status: 500 });
+
+          const passwordHash = await (await import("bcryptjs")).default.hash(password, 10);
+          const res = await db.query("UPDATE registered_users SET password_hash = $1 WHERE email = $2", [passwordHash, email]);
+          
+          if (res.rowCount === 0) {
+            return new Response(JSON.stringify({ error: "User not found" }), { status: 404 });
+          }
+
+          return new Response(JSON.stringify({ success: true }), { headers: { "Content-Type": "application/json" } });
+        } catch (err: any) {
+          if (err instanceof Response) return err;
+          return new Response(JSON.stringify({ error: err.message || "Server error" }), { status: 500 });
         }
       },
     },
