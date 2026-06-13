@@ -2851,15 +2851,31 @@ function Index() {
 
           {mode === "exam" && paper && examHdr ? (
             <div className="space-y-4">
-              <ExamPaperView
-                header={examHdr}
-                paper={paper}
-                logoUrl={logoUrl}
-                themeColor={themeColor}
-                footer={footer}
-                template={examTemplate}
-                customConfig={customConfig}
-              />
+              {examTemplate === "custom" ? (
+                <div className="border rounded-xl overflow-hidden bg-white shadow-lg min-h-[800px] flex flex-col">
+                  <div className="bg-primary/10 p-3 border-b text-sm font-semibold text-primary flex items-center gap-2">
+                    <Paintbrush className="h-4 w-4" />
+                    Custom HTML Exam Editor
+                  </div>
+                  <div className="flex-1">
+                    <CKEditor
+                      editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
+                      initData={customHtmlMap["exam"]}
+                      onChange={(e: any) => setCustomHtmlMap({ ...customHtmlMap, exam: e.editor.getData() })}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <ExamPaperView
+                  header={examHdr}
+                  paper={paper}
+                  logoUrl={logoUrl}
+                  themeColor={themeColor}
+                  footer={footer}
+                  template={examTemplate}
+                  customConfig={customConfig}
+                />
+              )}
               <Card className="p-4 no-print space-y-4">
                 <div className="flex items-center justify-between border-b pb-2">
                   <h3 className="text-sm font-semibold flex items-center gap-1.5">
@@ -3147,16 +3163,32 @@ function Index() {
             </div>
           ) : mode === "hhw" && packet && hhwHdr ? (
             <div className="space-y-4">
-              <HHWView
-                header={hhwHdr}
-                packet={packet}
-                template={hhwTemplate}
-                logoUrl={logoUrl}
-                themeColor={hhwTemplate === "vvip" ? "#8a6d1a" : themeColor}
-                coverImageUrl={coverImageUrl}
-                footer={footer}
-                customConfig={customConfig}
-              />
+              {hhwTemplate === "custom" ? (
+                <div className="border rounded-xl overflow-hidden bg-white shadow-lg min-h-[800px] flex flex-col">
+                  <div className="bg-primary/10 p-3 border-b text-sm font-semibold text-primary flex items-center gap-2">
+                    <Paintbrush className="h-4 w-4" />
+                    Custom HTML Holiday Homework Editor
+                  </div>
+                  <div className="flex-1">
+                    <CKEditor
+                      editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
+                      initData={customHtmlMap["hhw"]}
+                      onChange={(e: any) => setCustomHtmlMap({ ...customHtmlMap, hhw: e.editor.getData() })}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <HHWView
+                  header={hhwHdr}
+                  packet={packet}
+                  template={hhwTemplate}
+                  logoUrl={logoUrl}
+                  themeColor={hhwTemplate === "vvip" ? "#8a6d1a" : themeColor}
+                  coverImageUrl={coverImageUrl}
+                  footer={footer}
+                  customConfig={customConfig}
+                />
+              )}
               <Card className="p-4 no-print space-y-4">
                 <div className="flex items-center justify-between border-b pb-2">
                   <h3 className="text-sm font-semibold flex items-center gap-1.5">
@@ -3320,15 +3352,31 @@ function Index() {
             </div>
           ) : mode === "timetable" ? (
             <div className="space-y-4">
-              <TimetableView
-                header={ttHeader}
-                data={ttData}
-                template={ttTemplate}
-                themeColor={ttTemplate === "vvip" ? "#8a6d1a" : themeColor}
-                logoUrl={logoUrl}
-                footer={footer}
-                customConfig={customConfig}
-              />
+              {ttTemplate === "custom" ? (
+                <div className="border rounded-xl overflow-hidden bg-white shadow-lg min-h-[800px] flex flex-col">
+                  <div className="bg-primary/10 p-3 border-b text-sm font-semibold text-primary flex items-center gap-2">
+                    <Paintbrush className="h-4 w-4" />
+                    Custom HTML Timetable Editor
+                  </div>
+                  <div className="flex-1">
+                    <CKEditor
+                      editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
+                      initData={customHtmlMap["timetable"]}
+                      onChange={(e: any) => setCustomHtmlMap({ ...customHtmlMap, timetable: e.editor.getData() })}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <TimetableView
+                  header={ttHeader}
+                  data={ttData}
+                  template={ttTemplate}
+                  themeColor={ttTemplate === "vvip" ? "#8a6d1a" : themeColor}
+                  logoUrl={logoUrl}
+                  footer={footer}
+                  customConfig={customConfig}
+                />
+              )}
               <Card className="p-4 no-print">
                 <h3 className="text-sm font-semibold mb-2">Edit Cells (Subject / Teacher)</h3>
                 <div className="overflow-x-auto">
@@ -3379,16 +3427,32 @@ function Index() {
             </div>
           ) : mode === "resume" ? (
             <div className="space-y-4">
-              <ResumeView
-                mode={resumeMode}
-                resumeData={resumeData}
-                biodataData={biodataData}
-                template={resumeMode === "job" ? resumeTemplate : biodataTemplate}
-                themeColor={themeColor}
-                logoUrl={logoUrl}
-                footer={footer}
-                customConfig={customConfig}
-              />
+              {(resumeMode === "job" && resumeTemplate === "custom") || (resumeMode === "marriage" && biodataTemplate === "custom") ? (
+                <div className="border rounded-xl overflow-hidden bg-white shadow-lg min-h-[800px] flex flex-col">
+                  <div className="bg-primary/10 p-3 border-b text-sm font-semibold text-primary flex items-center gap-2">
+                    <Paintbrush className="h-4 w-4" />
+                    Custom HTML {resumeMode === "job" ? "Resume" : "Biodata"} Editor
+                  </div>
+                  <div className="flex-1">
+                    <CKEditor
+                      editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
+                      initData={resumeMode === "job" ? customHtmlMap["resume"] : customHtmlMap["biodata"]}
+                      onChange={(e: any) => setCustomHtmlMap({ ...customHtmlMap, [resumeMode === "job" ? "resume" : "biodata"]: e.editor.getData() })}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <ResumeView
+                  mode={resumeMode}
+                  resumeData={resumeData}
+                  biodataData={biodataData}
+                  template={resumeMode === "job" ? resumeTemplate : biodataTemplate}
+                  themeColor={themeColor}
+                  logoUrl={logoUrl}
+                  footer={footer}
+                  customConfig={customConfig}
+                />
+              )}
             </div>
           ) : mode === "admin" ? (
             <div className="space-y-4 no-print">
