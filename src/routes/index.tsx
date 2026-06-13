@@ -28,6 +28,7 @@ import {
 import { exportExamDocx, exportExamPdf } from "@/lib/exam-export";
 import { exportHHWDocx, exportHHWPdf } from "@/lib/hhw-export";
 import { exportTimetableDocx, exportTimetablePdf } from "@/lib/timetable-export";
+import { exportRawHtmlPdf, exportRawHtmlDocx } from "@/lib/raw-html-export";
 import { generateExamOffline, generateHHWOffline } from "@/lib/offline-generator";
 import {
   ResumeView,
@@ -454,6 +455,16 @@ function Index() {
 
   // Custom template designer config (shared across all modes)
   const [customConfig, setCustomConfig] = useState<CustomTemplateConfig>(DEFAULT_CUSTOM_CONFIG);
+  
+  // Custom HTML map to store raw HTML for each mode when in Custom Template
+  const [customHtmlMap, setCustomHtmlMap] = useState<Record<string, string>>({
+    exam: "<h1>My Exam Document</h1><p>Start typing here...</p>",
+    hhw: "<h1>My Holiday Homework</h1><p>Start typing here...</p>",
+    timetable: "<h1>My Timetable</h1><p>Start typing here...</p>",
+    resume: "<h1>My Resume</h1><p>Start typing here...</p>",
+    biodata: "<h1>My Bio Data</h1><p>Start typing here...</p>",
+  });
+
   // Track which mode currently has "custom" selected
   const examIsCustom = examTemplate === "custom";
   const hhwIsCustom = hhwTemplate === ("custom" as HHWTemplate);
@@ -1358,14 +1369,23 @@ function Index() {
                   onSelect={(id) => setExamTemplate(id as "standard" | "board" | "custom")}
                 />
                 {examTemplate === "custom" && (
-                  <div className="mt-2 rounded-xl border-2 border-primary/30 bg-primary/5 p-3">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-base">🎨</span>
-                      <span className="text-xs font-bold text-primary">
-                        Custom Template Designer
-                      </span>
+                  <div className="bg-card border rounded-lg p-3 sm:p-4 space-y-4">
+                    <div className="flex items-center gap-2 pb-2 border-b">
+                      <h3 className="font-semibold flex items-center gap-2">
+                        <Paintbrush className="h-4 w-4 text-primary" />
+                        Custom HTML Editor
+                      </h3>
                     </div>
-                    <CustomTemplateDesigner config={customConfig} onChange={setCustomConfig} />
+                    <div className="text-sm text-muted-foreground mb-2">
+                      Build your entire exam layout from scratch using the rich text editor below.
+                    </div>
+                    <div className="border rounded-md overflow-hidden bg-white min-h-[300px]">
+                      <CKEditor
+                        editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
+                        initData={customHtmlMap["exam"]}
+                        onChange={(e: any) => setCustomHtmlMap({ ...customHtmlMap, exam: e.editor.getData() })}
+                      />
+                    </div>
                   </div>
                 )}
               </div>
@@ -1417,14 +1437,23 @@ function Index() {
                   onSelect={(id) => setHhwTemplate(id as HHWTemplate)}
                 />
                 {hhwIsCustom && (
-                  <div className="mt-2 rounded-xl border-2 border-primary/30 bg-primary/5 p-3">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-base">🎨</span>
-                      <span className="text-xs font-bold text-primary">
-                        Custom Template Designer
-                      </span>
+                  <div className="bg-card border rounded-lg p-3 sm:p-4 space-y-4">
+                    <div className="flex items-center gap-2 pb-2 border-b">
+                      <h3 className="font-semibold flex items-center gap-2">
+                        <Paintbrush className="h-4 w-4 text-primary" />
+                        Custom HTML Editor
+                      </h3>
                     </div>
-                    <CustomTemplateDesigner config={customConfig} onChange={setCustomConfig} />
+                    <div className="text-sm text-muted-foreground mb-2">
+                      Build your holiday homework entirely from scratch.
+                    </div>
+                    <div className="border rounded-md overflow-hidden bg-white min-h-[300px]">
+                      <CKEditor
+                        editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
+                        initData={customHtmlMap["hhw"]}
+                        onChange={(e: any) => setCustomHtmlMap({ ...customHtmlMap, hhw: e.editor.getData() })}
+                      />
+                    </div>
                   </div>
                 )}
               </div>
@@ -1542,14 +1571,23 @@ function Index() {
                   onSelect={(id) => setTtTemplate(id as TimetableTemplate)}
                 />
                 {ttIsCustom && (
-                  <div className="mt-2 rounded-xl border-2 border-primary/30 bg-primary/5 p-3">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-base">🎨</span>
-                      <span className="text-xs font-bold text-primary">
-                        Custom Template Designer
-                      </span>
+                  <div className="bg-card border rounded-lg p-3 sm:p-4 space-y-4">
+                    <div className="flex items-center gap-2 pb-2 border-b">
+                      <h3 className="font-semibold flex items-center gap-2">
+                        <Paintbrush className="h-4 w-4 text-primary" />
+                        Custom HTML Editor
+                      </h3>
                     </div>
-                    <CustomTemplateDesigner config={customConfig} onChange={setCustomConfig} />
+                    <div className="text-sm text-muted-foreground mb-2">
+                      Build your timetable entirely from scratch.
+                    </div>
+                    <div className="border rounded-md overflow-hidden bg-white min-h-[300px]">
+                      <CKEditor
+                        editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
+                        initData={customHtmlMap["timetable"]}
+                        onChange={(e: any) => setCustomHtmlMap({ ...customHtmlMap, timetable: e.editor.getData() })}
+                      />
+                    </div>
                   </div>
                 )}
               </div>
@@ -1701,17 +1739,23 @@ function Index() {
                         onSelect={(id) => setResumeTemplate(id as ResumeTemplate)}
                       />
                       {resumeTemplate === "custom" && (
-                        <div className="mt-2 rounded-xl border-2 border-primary/30 bg-primary/5 p-3">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="text-base">🎨</span>
-                            <span className="text-xs font-bold text-primary">
-                              Custom Template Designer
-                            </span>
+                        <div className="bg-card border rounded-lg p-3 sm:p-4 space-y-4">
+                          <div className="flex items-center gap-2 pb-2 border-b">
+                            <h3 className="font-semibold flex items-center gap-2">
+                              <Paintbrush className="h-4 w-4 text-primary" />
+                              Custom HTML Editor
+                            </h3>
                           </div>
-                          <CustomTemplateDesigner
-                            config={customConfig}
-                            onChange={setCustomConfig}
-                          />
+                          <div className="text-sm text-muted-foreground mb-2">
+                            Build your resume entirely from scratch.
+                          </div>
+                          <div className="border rounded-md overflow-hidden bg-white min-h-[300px]">
+                            <CKEditor
+                              editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
+                              initData={customHtmlMap["resume"]}
+                              onChange={(e: any) => setCustomHtmlMap({ ...customHtmlMap, resume: e.editor.getData() })}
+                            />
+                          </div>
                         </div>
                       )}
                     </div>
@@ -2167,17 +2211,23 @@ function Index() {
                         onSelect={(id) => setBiodataTemplate(id as BiodataTemplate)}
                       />
                       {biodataTemplate === "custom" && (
-                        <div className="mt-2 rounded-xl border-2 border-primary/30 bg-primary/5 p-3">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="text-base">🎨</span>
-                            <span className="text-xs font-bold text-primary">
-                              Custom Template Designer
-                            </span>
+                        <div className="bg-card border rounded-lg p-3 sm:p-4 space-y-4">
+                          <div className="flex items-center gap-2 pb-2 border-b">
+                            <h3 className="font-semibold flex items-center gap-2">
+                              <Paintbrush className="h-4 w-4 text-primary" />
+                              Custom HTML Editor
+                            </h3>
                           </div>
-                          <CustomTemplateDesigner
-                            config={customConfig}
-                            onChange={setCustomConfig}
-                          />
+                          <div className="text-sm text-muted-foreground mb-2">
+                            Build your bio data entirely from scratch.
+                          </div>
+                          <div className="border rounded-md overflow-hidden bg-white min-h-[300px]">
+                            <CKEditor
+                              editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
+                              initData={customHtmlMap["biodata"]}
+                              onChange={(e: any) => setCustomHtmlMap({ ...customHtmlMap, biodata: e.editor.getData() })}
+                            />
+                          </div>
                         </div>
                       )}
                     </div>
@@ -2671,11 +2721,18 @@ function Index() {
               <Button
                 variant="outline"
                 onClick={() => {
-                  if (mode === "exam")
+                  if (mode === "exam") {
+                    if (examTemplate === "custom") return exportRawHtmlPdf(customHtmlMap["exam"], `${examHdr!.subject}-${examHdr!.className}-exam.pdf`);
                     return exportExamPdf(`${examHdr!.subject}-${examHdr!.className}-exam.pdf`);
-                  if (mode === "hhw")
+                  }
+                  if (mode === "hhw") {
+                    if (hhwTemplate === "custom") return exportRawHtmlPdf(customHtmlMap["hhw"], `${hhwHdr!.className}-holiday-homework.pdf`);
                     return exportHHWPdf(`${hhwHdr!.className}-holiday-homework.pdf`);
-                  return exportTimetablePdf(`${ttHeader.className}-timetable.pdf`);
+                  }
+                  if (mode === "timetable") {
+                    if (ttTemplate === "custom") return exportRawHtmlPdf(customHtmlMap["timetable"], "timetable.pdf");
+                    return exportTimetablePdf(`${ttHeader.className}-timetable.pdf`);
+                  }
                 }}
               >
                 <Download className="mr-2 h-4 w-4" /> PDF
@@ -2683,7 +2740,8 @@ function Index() {
               <Button
                 variant="outline"
                 onClick={() => {
-                  if (mode === "exam")
+                  if (mode === "exam") {
+                    if (examTemplate === "custom") return exportRawHtmlDocx(customHtmlMap["exam"], `${examHdr!.subject}-${examHdr!.className}-exam.docx`);
                     return exportExamDocx(
                       examHdr!,
                       paper!,
@@ -2693,9 +2751,15 @@ function Index() {
                       footer,
                       themeColor,
                     );
-                  if (mode === "hhw")
+                  }
+                  if (mode === "hhw") {
+                    if (hhwTemplate === "custom") return exportRawHtmlDocx(customHtmlMap["hhw"], `${hhwHdr!.className}-holiday-homework.docx`);
                     return exportHHWDocx(hhwHdr!, packet!, hhwTemplate, logoUrl, customConfig);
-                  return exportTimetableDocx(ttHeader, ttData, ttTemplate, logoUrl, customConfig);
+                  }
+                  if (mode === "timetable") {
+                    if (ttTemplate === "custom") return exportRawHtmlDocx(customHtmlMap["timetable"], "timetable.docx");
+                    return exportTimetableDocx(ttHeader, ttData, ttTemplate, logoUrl, customConfig);
+                  }
                 }}
               >
                 <FileType className="mr-2 h-4 w-4" /> DOCX
@@ -2719,14 +2783,27 @@ function Index() {
               <Button
                 size="sm"
                 onClick={() => {
-                  if (mode === "exam")
+                  if (mode === "exam") {
+                    if (examTemplate === "custom") return exportRawHtmlPdf(customHtmlMap["exam"], `${examHdr!.subject}-${examHdr!.className}-exam.pdf`);
                     return exportExamPdf(`${examHdr!.subject}-${examHdr!.className}-exam.pdf`);
-                  if (mode === "hhw")
+                  }
+                  if (mode === "hhw") {
+                    if (hhwTemplate === "custom") return exportRawHtmlPdf(customHtmlMap["hhw"], `${hhwHdr!.className}-holiday-homework.pdf`);
                     return exportHHWPdf(`${hhwHdr!.className}-holiday-homework.pdf`);
+                  }
+                  if (mode === "timetable") {
+                    if (ttTemplate === "custom") return exportRawHtmlPdf(customHtmlMap["timetable"], "timetable.pdf");
+                  }
                   const fname =
                     resumeMode === "job"
                       ? `${resumeData.name || "Resume"}_Resume.pdf`
                       : `${biodataData.name || "Biodata"}_Biodata.pdf`;
+                  if (mode === "resume" && resumeMode === "job" && resumeTemplate === "custom") {
+                    return exportRawHtmlPdf(customHtmlMap["resume"], fname);
+                  }
+                  if (mode === "resume" && resumeMode === "marriage" && biodataTemplate === "custom") {
+                    return exportRawHtmlPdf(customHtmlMap["biodata"], fname);
+                  }
                   return exportResumePdf(fname, resumeMode);
                 }}
               >
@@ -2736,7 +2813,8 @@ function Index() {
                 size="sm"
                 variant="outline"
                 onClick={() => {
-                  if (mode === "exam")
+                  if (mode === "exam") {
+                    if (examTemplate === "custom") return exportRawHtmlDocx(customHtmlMap["exam"], `${examHdr!.subject}-${examHdr!.className}-exam.docx`);
                     return exportExamDocx(
                       examHdr!,
                       paper!,
@@ -2746,17 +2824,20 @@ function Index() {
                       footer,
                       themeColor,
                     );
-                  if (mode === "hhw")
+                  }
+                  if (mode === "hhw") {
+                    if (hhwTemplate === "custom") return exportRawHtmlDocx(customHtmlMap["hhw"], `${hhwHdr!.className}-holiday-homework.docx`);
                     return exportHHWDocx(hhwHdr!, packet!, hhwTemplate, logoUrl, customConfig);
+                  }
+                  if (mode === "timetable") {
+                    if (ttTemplate === "custom") return exportRawHtmlDocx(customHtmlMap["timetable"], "timetable.docx");
+                  }
                   if (resumeMode === "job") {
+                    if (resumeTemplate === "custom") return exportRawHtmlDocx(customHtmlMap["resume"], `${resumeData.name || "Resume"}_Resume.docx`);
                     return exportResumeDocx(resumeData, resumeTemplate, themeColor, customConfig);
                   } else {
-                    return exportBiodataDocx(
-                      biodataData,
-                      biodataTemplate,
-                      themeColor,
-                      customConfig,
-                    );
+                    if (biodataTemplate === "custom") return exportRawHtmlDocx(customHtmlMap["biodata"], `${biodataData.name || "Biodata"}_Biodata.docx`);
+                    return exportBiodataDocx(biodataData, biodataTemplate, themeColor, customConfig);
                   }
                 }}
               >

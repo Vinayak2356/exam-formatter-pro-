@@ -13,6 +13,7 @@ import { Route as SwaggerRouteImport } from './routes/swagger'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiPublicGenerateHhwRouteImport } from './routes/api/public/generate-hhw'
 import { Route as ApiPublicGenerateExamRouteImport } from './routes/api/public/generate-exam'
+import { Route as ApiPublicExportDocxRouteImport } from './routes/api/public/export-docx'
 import { Route as ApiAuthSessionRouteImport } from './routes/api/auth/session'
 import { Route as ApiAuthRegisterRouteImport } from './routes/api/auth/register'
 import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
@@ -36,6 +37,11 @@ const ApiPublicGenerateHhwRoute = ApiPublicGenerateHhwRouteImport.update({
 const ApiPublicGenerateExamRoute = ApiPublicGenerateExamRouteImport.update({
   id: '/api/public/generate-exam',
   path: '/api/public/generate-exam',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicExportDocxRoute = ApiPublicExportDocxRouteImport.update({
+  id: '/api/public/export-docx',
+  path: '/api/public/export-docx',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthSessionRoute = ApiAuthSessionRouteImport.update({
@@ -66,6 +72,7 @@ export interface FileRoutesByFullPath {
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/register': typeof ApiAuthRegisterRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
+  '/api/public/export-docx': typeof ApiPublicExportDocxRoute
   '/api/public/generate-exam': typeof ApiPublicGenerateExamRoute
   '/api/public/generate-hhw': typeof ApiPublicGenerateHhwRoute
 }
@@ -76,6 +83,7 @@ export interface FileRoutesByTo {
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/register': typeof ApiAuthRegisterRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
+  '/api/public/export-docx': typeof ApiPublicExportDocxRoute
   '/api/public/generate-exam': typeof ApiPublicGenerateExamRoute
   '/api/public/generate-hhw': typeof ApiPublicGenerateHhwRoute
 }
@@ -87,6 +95,7 @@ export interface FileRoutesById {
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/register': typeof ApiAuthRegisterRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
+  '/api/public/export-docx': typeof ApiPublicExportDocxRoute
   '/api/public/generate-exam': typeof ApiPublicGenerateExamRoute
   '/api/public/generate-hhw': typeof ApiPublicGenerateHhwRoute
 }
@@ -99,6 +108,7 @@ export interface FileRouteTypes {
     | '/api/auth/login'
     | '/api/auth/register'
     | '/api/auth/session'
+    | '/api/public/export-docx'
     | '/api/public/generate-exam'
     | '/api/public/generate-hhw'
   fileRoutesByTo: FileRoutesByTo
@@ -109,6 +119,7 @@ export interface FileRouteTypes {
     | '/api/auth/login'
     | '/api/auth/register'
     | '/api/auth/session'
+    | '/api/public/export-docx'
     | '/api/public/generate-exam'
     | '/api/public/generate-hhw'
   id:
@@ -119,6 +130,7 @@ export interface FileRouteTypes {
     | '/api/auth/login'
     | '/api/auth/register'
     | '/api/auth/session'
+    | '/api/public/export-docx'
     | '/api/public/generate-exam'
     | '/api/public/generate-hhw'
   fileRoutesById: FileRoutesById
@@ -130,6 +142,7 @@ export interface RootRouteChildren {
   ApiAuthLoginRoute: typeof ApiAuthLoginRoute
   ApiAuthRegisterRoute: typeof ApiAuthRegisterRoute
   ApiAuthSessionRoute: typeof ApiAuthSessionRoute
+  ApiPublicExportDocxRoute: typeof ApiPublicExportDocxRoute
   ApiPublicGenerateExamRoute: typeof ApiPublicGenerateExamRoute
   ApiPublicGenerateHhwRoute: typeof ApiPublicGenerateHhwRoute
 }
@@ -162,6 +175,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/generate-exam'
       fullPath: '/api/public/generate-exam'
       preLoaderRoute: typeof ApiPublicGenerateExamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/export-docx': {
+      id: '/api/public/export-docx'
+      path: '/api/public/export-docx'
+      fullPath: '/api/public/export-docx'
+      preLoaderRoute: typeof ApiPublicExportDocxRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth/session': {
@@ -202,6 +222,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAuthLoginRoute: ApiAuthLoginRoute,
   ApiAuthRegisterRoute: ApiAuthRegisterRoute,
   ApiAuthSessionRoute: ApiAuthSessionRoute,
+  ApiPublicExportDocxRoute: ApiPublicExportDocxRoute,
   ApiPublicGenerateExamRoute: ApiPublicGenerateExamRoute,
   ApiPublicGenerateHhwRoute: ApiPublicGenerateHhwRoute,
 }
