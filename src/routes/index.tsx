@@ -2559,6 +2559,7 @@ function Index() {
                 <Label>Source Text (chapter / syllabus / topics)</Label>
                 <div className="border rounded-md overflow-hidden bg-white">
                   <CKEditor
+                    editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
                     initData={sourceText}
                     onChange={(e: any) => setSourceText(e.editor.getData())}
                   />
@@ -2576,6 +2577,7 @@ function Index() {
                 <Label>Extra Instructions (optional)</Label>
                 <div className="border rounded-md overflow-hidden bg-white">
                   <CKEditor
+                    editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
                     initData={instructions}
                     onChange={(e: any) => setInstructions(e.editor.getData())}
                   />

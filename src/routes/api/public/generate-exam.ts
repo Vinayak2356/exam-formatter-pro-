@@ -80,7 +80,18 @@ export const Route = createFileRoute("/api/public/generate-exam")({
           });
         }
 
-        const apiKey = process.env.GEMINI_API_KEY;
+        let apiKey = process.env.GEMINI_API_KEY;
+        if (!apiKey) {
+          try {
+            const fs = await import("fs");
+            const path = await import("path");
+            const envContent = fs.readFileSync(path.join(process.cwd(), ".env"), "utf-8");
+            const match = envContent.match(/^GEMINI_API_KEY=["']?(.*?)["']?$/m);
+            if (match) apiKey = match[1];
+          } catch (e) {
+            // ignore
+          }
+        }
         const useOffline = body.engine === "offline" || !apiKey;
 
         if (useOffline) {
