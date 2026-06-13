@@ -22,9 +22,10 @@ export const Route = createFileRoute("/api/auth/login")({
           // Ensure tables exist and admin is seeded before logging in
           await logger.ensureTablesExist();
 
-          const res = await db.query("SELECT password_hash FROM registered_users WHERE email = $1", [
-            email,
-          ]);
+          const res = await db.query(
+            "SELECT password_hash FROM registered_users WHERE email = $1",
+            [email],
+          );
           if (res.rows.length === 0) {
             return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401 });
           }

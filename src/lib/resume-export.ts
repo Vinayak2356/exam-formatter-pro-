@@ -133,22 +133,28 @@ export async function exportResumeDocx(
   const textColorHex = isCustom ? getHexColor(customConfig.textColor) : "000000";
   const secondaryColorHex = isCustom ? getHexColor(customConfig.secondaryColor) : "555555";
 
-  const visible = isCustom && customConfig.visibleSections ? customConfig.visibleSections : {
-    summary: true,
-    experience: true,
-    projects: true,
-    education: true,
-    skills: true,
-    languages: true,
-  };
+  const visible =
+    isCustom && customConfig.visibleSections
+      ? customConfig.visibleSections
+      : {
+          summary: true,
+          experience: true,
+          projects: true,
+          education: true,
+          skills: true,
+          languages: true,
+        };
 
-  const titles = isCustom && customConfig.sectionTitles ? customConfig.sectionTitles : {
-    experience: "Work Experience",
-    projects: "Key Projects",
-    education: "Education",
-    skills: "Skills",
-    languages: "Languages",
-  };
+  const titles =
+    isCustom && customConfig.sectionTitles
+      ? customConfig.sectionTitles
+      : {
+          experience: "Work Experience",
+          projects: "Key Projects",
+          education: "Education",
+          skills: "Skills",
+          languages: "Languages",
+        };
 
   const children: Paragraph[] = [];
 

@@ -25,14 +25,14 @@ export const Route = createFileRoute("/api/auth/register")({
           const passwordHash = await (await import("bcryptjs")).default.hash(password, 10);
 
           try {
-            await db.query(`
+            await db.query(
+              `
               INSERT INTO registered_users (email, password_hash) 
               VALUES ($1, $2)
               ON CONFLICT (email) DO UPDATE SET password_hash = EXCLUDED.password_hash
-            `, [
-              email,
-              passwordHash,
-            ]);
+            `,
+              [email, passwordHash],
+            );
           } catch (err: any) {
             if (err.code === "23505") {
               // unique violation

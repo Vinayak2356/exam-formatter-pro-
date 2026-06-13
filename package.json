@@ -80,6 +80,7 @@
     "@railway/cli": "^5.12.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/file-saver": "^2.0.7",
+    "@types/html-to-docx": "^1.8.1",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.16.5",
     "@types/pg": "^8.20.0",

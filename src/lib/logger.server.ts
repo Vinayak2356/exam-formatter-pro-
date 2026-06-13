@@ -22,7 +22,7 @@ let pool: Pool | null = null;
 
 export function getPool(): Pool | null {
   if (typeof window !== "undefined") return null; // Server only
-  
+
   if (!pool) {
     const connectionString = process.env.DATABASE_URL;
     if (!connectionString) {
@@ -31,9 +31,12 @@ export function getPool(): Pool | null {
     }
     pool = new Pool({
       connectionString,
-      ssl: connectionString.includes("railway.internal") || connectionString.includes("localhost") || connectionString.includes("127.0.0.1")
-        ? false
-        : { rejectUnauthorized: false },
+      ssl:
+        connectionString.includes("railway.internal") ||
+        connectionString.includes("localhost") ||
+        connectionString.includes("127.0.0.1")
+          ? false
+          : { rejectUnauthorized: false },
     });
   }
   return pool;
@@ -44,7 +47,7 @@ export async function ensureTablesExist() {
   if (initialized) return;
   const db = getPool();
   if (!db) return;
-  
+
   try {
     await db.query(`
       CREATE TABLE IF NOT EXISTS activity_logs (
@@ -61,7 +64,7 @@ export async function ensureTablesExist() {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
     `);
-    
+
     // Add password_hash column if it doesn't exist (in case table was created previously)
     await db.query(`
       ALTER TABLE registered_users 
@@ -103,9 +106,9 @@ export async function getLogs(): Promise<LogEntry[]> {
     try {
       await ensureTablesExist();
       const res = await db.query(
-        `SELECT id, timestamp, user_email as "userEmail", action, details FROM activity_logs ORDER BY timestamp DESC LIMIT 100`
+        `SELECT id, timestamp, user_email as "userEmail", action, details FROM activity_logs ORDER BY timestamp DESC LIMIT 100`,
       );
-      return res.rows.map(row => ({
+      return res.rows.map((row) => ({
         ...row,
         timestamp: new Date(row.timestamp).toISOString(),
       })) as LogEntry[];
@@ -123,17 +126,21 @@ export async function getLogs(): Promise<LogEntry[]> {
   }
 }
 
-export async function addLog(userEmail: string, action: string, details: string): Promise<LogEntry> {
+export async function addLog(
+  userEmail: string,
+  action: string,
+  details: string,
+): Promise<LogEntry> {
   const entryId = Math.random().toString(36).substring(2, 11);
   const entryTimestamp = new Date().toISOString();
-  
+
   const db = getPool();
   if (db) {
     try {
       await ensureTablesExist();
       await db.query(
         "INSERT INTO activity_logs (id, timestamp, user_email, action, details) VALUES ($1, $2, $3, $4, $5)",
-        [entryId, entryTimestamp, userEmail, action, details]
+        [entryId, entryTimestamp, userEmail, action, details],
       );
       return {
         id: entryId,
@@ -166,9 +173,9 @@ export async function getAddedUsers(): Promise<UserEntry[]> {
     try {
       await ensureTablesExist();
       const res = await db.query(
-        `SELECT email, created_at as "createdAt" FROM registered_users ORDER BY created_at DESC`
+        `SELECT email, created_at as "createdAt" FROM registered_users ORDER BY created_at DESC`,
       );
-      return res.rows.map(row => ({
+      return res.rows.map((row) => ({
         ...row,
         createdAt: new Date(row.createdAt).toISOString(),
       })) as UserEntry[];
@@ -188,24 +195,27 @@ export async function getAddedUsers(): Promise<UserEntry[]> {
 
 export async function addAddedUser(email: string): Promise<UserEntry> {
   const createdAt = new Date().toISOString();
-  
+
   const db = getPool();
   if (db) {
     try {
       await ensureTablesExist();
-      
-      const checkRes = await db.query("SELECT email FROM registered_users WHERE LOWER(email) = LOWER($1)", [email]);
+
+      const checkRes = await db.query(
+        "SELECT email FROM registered_users WHERE LOWER(email) = LOWER($1)",
+        [email],
+      );
       if (checkRes.rows.length > 0) {
         return {
           email,
           createdAt: new Date().toISOString(),
         };
       }
-      
-      await db.query(
-        "INSERT INTO registered_users (email, created_at) VALUES ($1, $2)",
-        [email, createdAt]
-      );
+
+      await db.query("INSERT INTO registered_users (email, created_at) VALUES ($1, $2)", [
+        email,
+        createdAt,
+      ]);
       return {
         email,
         createdAt,

@@ -60,6 +60,7 @@ import {
   KeyRound,
   Mail,
   LogOut,
+  Paintbrush,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -109,7 +110,7 @@ function AuthCard({ onAuthSuccess }: { onAuthSuccess: (user: any) => void }) {
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
-      
+
       if (!res.ok) {
         throw new Error(data.error || "Authentication failed");
       }
@@ -117,7 +118,9 @@ function AuthCard({ onAuthSuccess }: { onAuthSuccess: (user: any) => void }) {
       if (data.session) {
         // Store token in localStorage
         localStorage.setItem("auth_token", data.session.access_token);
-        toast.success(isSignUp ? "Account created and signed in successfully!" : "Signed in successfully!");
+        toast.success(
+          isSignUp ? "Account created and signed in successfully!" : "Signed in successfully!",
+        );
         onAuthSuccess(data.session.user);
       }
     } catch (err: any) {
@@ -200,14 +203,14 @@ function Index() {
     const token = localStorage.getItem("auth_token");
     if (token) {
       fetch("/api/auth/session", {
-        headers: { "Authorization": `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       })
-      .then(res => res.json())
-      .then(data => {
-        setUser(data.session?.user ?? null);
-        setAuthLoading(false);
-      })
-      .catch(() => setAuthLoading(false));
+        .then((res) => res.json())
+        .then((data) => {
+          setUser(data.session?.user ?? null);
+          setAuthLoading(false);
+        })
+        .catch(() => setAuthLoading(false));
     } else {
       setAuthLoading(false);
     }
@@ -321,7 +324,7 @@ function Index() {
     try {
       const res = await fetch(`/api/admin/manage?email=${encodeURIComponent(emailToDelete)}`, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to delete user");
@@ -345,7 +348,7 @@ function Index() {
       const res = await fetch("/api/admin/manage", {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ email: emailToUpdate, password: editUserPassword })
+        body: JSON.stringify({ email: emailToUpdate, password: editUserPassword }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to update user");
@@ -455,7 +458,7 @@ function Index() {
 
   // Custom template designer config (shared across all modes)
   const [customConfig, setCustomConfig] = useState<CustomTemplateConfig>(DEFAULT_CUSTOM_CONFIG);
-  
+
   // Custom HTML map to store raw HTML for each mode when in Custom Template
   const [customHtmlMap, setCustomHtmlMap] = useState<Record<string, string>>({
     exam: "<h1>My Exam Document</h1><p>Start typing here...</p>",
@@ -1203,7 +1206,9 @@ function Index() {
             <div className="flex items-center gap-3">
               <FileText className="h-6 w-6 text-primary" />
               <div>
-                <h1 className="text-lg font-semibold">Exam · Holiday Homework · Time Table Maker</h1>
+                <h1 className="text-lg font-semibold">
+                  Exam · Holiday Homework · Time Table Maker
+                </h1>
                 <p className="text-xs text-muted-foreground">
                   Premium school templates — print, PDF, or DOCX.
                 </p>
@@ -1266,11 +1271,10 @@ function Index() {
 
       <main className="mx-auto max-w-7xl px-6 py-8 grid gap-8 lg:grid-cols-[440px_1fr]">
         <Card className="p-5 space-y-5 no-print h-fit lg:sticky lg:top-6">
-          <Tabs
-            value={mode}
-            onValueChange={(v) => setMode(v as any)}
-          >
-            <TabsList className={`grid w-full ${(user?.email?.toLowerCase() === 'admin@school.com' || user?.email?.toLowerCase() === 'admin2026@school.com') ? 'grid-cols-5' : 'grid-cols-4'}`}>
+          <Tabs value={mode} onValueChange={(v) => setMode(v as any)}>
+            <TabsList
+              className={`grid w-full ${user?.email?.toLowerCase() === "admin@school.com" || user?.email?.toLowerCase() === "admin2026@school.com" ? "grid-cols-5" : "grid-cols-4"}`}
+            >
               <TabsTrigger value="exam">
                 <GraduationCap className="mr-2 h-4 w-4" /> Exam
               </TabsTrigger>
@@ -1283,7 +1287,8 @@ function Index() {
               <TabsTrigger value="resume">
                 <FileText className="mr-2 h-4 w-4" /> Resume / Bio
               </TabsTrigger>
-              {(user?.email?.toLowerCase() === 'admin@school.com' || user?.email?.toLowerCase() === 'admin2026@school.com') && (
+              {(user?.email?.toLowerCase() === "admin@school.com" ||
+                user?.email?.toLowerCase() === "admin2026@school.com") && (
                 <TabsTrigger value="admin">
                   <KeyRound className="mr-2 h-4 w-4" /> Admin
                 </TabsTrigger>
@@ -1383,7 +1388,9 @@ function Index() {
                       <CKEditor
                         editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
                         initData={customHtmlMap["exam"]}
-                        onChange={(e: any) => setCustomHtmlMap({ ...customHtmlMap, exam: e.editor.getData() })}
+                        onChange={(e: any) =>
+                          setCustomHtmlMap({ ...customHtmlMap, exam: e.editor.getData() })
+                        }
                       />
                     </div>
                   </div>
@@ -1451,7 +1458,9 @@ function Index() {
                       <CKEditor
                         editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
                         initData={customHtmlMap["hhw"]}
-                        onChange={(e: any) => setCustomHtmlMap({ ...customHtmlMap, hhw: e.editor.getData() })}
+                        onChange={(e: any) =>
+                          setCustomHtmlMap({ ...customHtmlMap, hhw: e.editor.getData() })
+                        }
                       />
                     </div>
                   </div>
@@ -1585,7 +1594,9 @@ function Index() {
                       <CKEditor
                         editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
                         initData={customHtmlMap["timetable"]}
-                        onChange={(e: any) => setCustomHtmlMap({ ...customHtmlMap, timetable: e.editor.getData() })}
+                        onChange={(e: any) =>
+                          setCustomHtmlMap({ ...customHtmlMap, timetable: e.editor.getData() })
+                        }
                       />
                     </div>
                   </div>
@@ -1753,7 +1764,9 @@ function Index() {
                             <CKEditor
                               editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
                               initData={customHtmlMap["resume"]}
-                              onChange={(e: any) => setCustomHtmlMap({ ...customHtmlMap, resume: e.editor.getData() })}
+                              onChange={(e: any) =>
+                                setCustomHtmlMap({ ...customHtmlMap, resume: e.editor.getData() })
+                              }
                             />
                           </div>
                         </div>
@@ -2225,7 +2238,9 @@ function Index() {
                             <CKEditor
                               editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
                               initData={customHtmlMap["biodata"]}
-                              onChange={(e: any) => setCustomHtmlMap({ ...customHtmlMap, biodata: e.editor.getData() })}
+                              onChange={(e: any) =>
+                                setCustomHtmlMap({ ...customHtmlMap, biodata: e.editor.getData() })
+                              }
                             />
                           </div>
                         </div>
@@ -2566,17 +2581,39 @@ function Index() {
                 ) : (
                   <div className="space-y-2 max-h-[250px] overflow-y-auto pr-1">
                     {addedUsers.map((usr, i) => (
-                      <div key={i} className="flex flex-col p-2.5 rounded-lg border bg-accent/20 text-xs">
+                      <div
+                        key={i}
+                        className="flex flex-col p-2.5 rounded-lg border bg-accent/20 text-xs"
+                      >
                         <div className="flex justify-between items-start">
                           <div className="flex flex-col">
-                            <span className="font-semibold text-foreground break-all">{usr.email}</span>
+                            <span className="font-semibold text-foreground break-all">
+                              {usr.email}
+                            </span>
                             <span className="text-[10px] text-muted-foreground mt-1">
                               Added: {new Date(usr.createdAt).toLocaleString()}
                             </span>
                           </div>
                           <div className="flex gap-1">
-                            <Button size="sm" variant="ghost" className="h-6 px-2 text-[10px]" onClick={() => { setEditUserEmail(editUserEmail === usr.email ? null : usr.email); setEditUserPassword(""); }}>Edit</Button>
-                            <Button size="sm" variant="ghost" className="h-6 px-2 text-[10px] text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => handleDeleteUser(usr.email)}><Trash2 className="h-3 w-3" /></Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-6 px-2 text-[10px]"
+                              onClick={() => {
+                                setEditUserEmail(editUserEmail === usr.email ? null : usr.email);
+                                setEditUserPassword("");
+                              }}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-6 px-2 text-[10px] text-destructive hover:text-destructive hover:bg-destructive/10"
+                              onClick={() => handleDeleteUser(usr.email)}
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
                           </div>
                         </div>
                         {editUserEmail === usr.email && (
@@ -2588,7 +2625,13 @@ function Index() {
                               value={editUserPassword}
                               onChange={(e) => setEditUserPassword(e.target.value)}
                             />
-                            <Button size="sm" className="h-7 text-xs" onClick={() => handleUpdateUser(usr.email)}>Save</Button>
+                            <Button
+                              size="sm"
+                              className="h-7 text-xs"
+                              onClick={() => handleUpdateUser(usr.email)}
+                            >
+                              Save
+                            </Button>
                           </div>
                         )}
                       </div>
@@ -2642,62 +2685,62 @@ function Index() {
               <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                 Design
               </h2>
-            <div className="space-y-2">
-              <Label>{mode === "resume" ? "Your Photo / Logo" : "School Logo"}</Label>
-              <div className="flex items-center gap-3">
-                {logoUrl ? (
-                  <div className="relative">
-                    <img
-                      src={logoUrl}
-                      alt="logo preview"
-                      className="h-14 w-14 rounded border object-contain bg-white"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setLogoUrl(null)}
-                      className="absolute -top-2 -right-2 rounded-full bg-destructive text-destructive-foreground p-0.5"
-                      aria-label="Remove logo"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </div>
-                ) : (
-                  <label className="flex h-14 w-14 cursor-pointer items-center justify-center rounded border border-dashed text-muted-foreground hover:bg-accent">
-                    <Upload className="h-5 w-5" />
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => readImage(e.target.files?.[0], setLogoUrl)}
-                    />
-                  </label>
-                )}
-                <p className="text-xs text-muted-foreground">PNG / JPG, up to 2MB.</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
               <div className="space-y-2">
-                <Label>Accent Color</Label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="color"
-                    value={themeColor}
-                    onChange={(e) => setThemeColor(e.target.value)}
-                    className="h-9 w-12 cursor-pointer rounded border bg-transparent"
-                  />
-                  <Input value={themeColor} onChange={(e) => setThemeColor(e.target.value)} />
+                <Label>{mode === "resume" ? "Your Photo / Logo" : "School Logo"}</Label>
+                <div className="flex items-center gap-3">
+                  {logoUrl ? (
+                    <div className="relative">
+                      <img
+                        src={logoUrl}
+                        alt="logo preview"
+                        className="h-14 w-14 rounded border object-contain bg-white"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setLogoUrl(null)}
+                        className="absolute -top-2 -right-2 rounded-full bg-destructive text-destructive-foreground p-0.5"
+                        aria-label="Remove logo"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="flex h-14 w-14 cursor-pointer items-center justify-center rounded border border-dashed text-muted-foreground hover:bg-accent">
+                      <Upload className="h-5 w-5" />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => readImage(e.target.files?.[0], setLogoUrl)}
+                      />
+                    </label>
+                  )}
+                  <p className="text-xs text-muted-foreground">PNG / JPG, up to 2MB.</p>
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label>{mode === "resume" ? "Signature / Footer Note" : "Footer Note"}</Label>
-                <Input
-                  value={footer}
-                  onChange={(e) => setFooter(e.target.value)}
-                  placeholder={mode === "resume" ? "e.g. Signature" : "All the best!"}
-                />
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-2">
+                  <Label>Accent Color</Label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={themeColor}
+                      onChange={(e) => setThemeColor(e.target.value)}
+                      className="h-9 w-12 cursor-pointer rounded border bg-transparent"
+                    />
+                    <Input value={themeColor} onChange={(e) => setThemeColor(e.target.value)} />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>{mode === "resume" ? "Signature / Footer Note" : "Footer Note"}</Label>
+                  <Input
+                    value={footer}
+                    onChange={(e) => setFooter(e.target.value)}
+                    placeholder={mode === "resume" ? "e.g. Signature" : "All the best!"}
+                  />
+                </div>
               </div>
             </div>
-          </div>
           )}
 
           {mode !== "resume" && mode !== "admin" && (
@@ -2722,15 +2765,24 @@ function Index() {
                 variant="outline"
                 onClick={() => {
                   if (mode === "exam") {
-                    if (examTemplate === "custom") return exportRawHtmlPdf(customHtmlMap["exam"], `${examHdr!.subject}-${examHdr!.className}-exam.pdf`);
+                    if (examTemplate === "custom")
+                      return exportRawHtmlPdf(
+                        customHtmlMap["exam"],
+                        `${examHdr!.subject}-${examHdr!.className}-exam.pdf`,
+                      );
                     return exportExamPdf(`${examHdr!.subject}-${examHdr!.className}-exam.pdf`);
                   }
                   if (mode === "hhw") {
-                    if (hhwTemplate === "custom") return exportRawHtmlPdf(customHtmlMap["hhw"], `${hhwHdr!.className}-holiday-homework.pdf`);
+                    if (hhwTemplate === "custom")
+                      return exportRawHtmlPdf(
+                        customHtmlMap["hhw"],
+                        `${hhwHdr!.className}-holiday-homework.pdf`,
+                      );
                     return exportHHWPdf(`${hhwHdr!.className}-holiday-homework.pdf`);
                   }
                   if (mode === "timetable") {
-                    if (ttTemplate === "custom") return exportRawHtmlPdf(customHtmlMap["timetable"], "timetable.pdf");
+                    if (ttTemplate === "custom")
+                      return exportRawHtmlPdf(customHtmlMap["timetable"], "timetable.pdf");
                     return exportTimetablePdf(`${ttHeader.className}-timetable.pdf`);
                   }
                 }}
@@ -2741,7 +2793,11 @@ function Index() {
                 variant="outline"
                 onClick={() => {
                   if (mode === "exam") {
-                    if (examTemplate === "custom") return exportRawHtmlDocx(customHtmlMap["exam"], `${examHdr!.subject}-${examHdr!.className}-exam.docx`);
+                    if (examTemplate === "custom")
+                      return exportRawHtmlDocx(
+                        customHtmlMap["exam"],
+                        `${examHdr!.subject}-${examHdr!.className}-exam.docx`,
+                      );
                     return exportExamDocx(
                       examHdr!,
                       paper!,
@@ -2753,11 +2809,16 @@ function Index() {
                     );
                   }
                   if (mode === "hhw") {
-                    if (hhwTemplate === "custom") return exportRawHtmlDocx(customHtmlMap["hhw"], `${hhwHdr!.className}-holiday-homework.docx`);
+                    if (hhwTemplate === "custom")
+                      return exportRawHtmlDocx(
+                        customHtmlMap["hhw"],
+                        `${hhwHdr!.className}-holiday-homework.docx`,
+                      );
                     return exportHHWDocx(hhwHdr!, packet!, hhwTemplate, logoUrl, customConfig);
                   }
                   if (mode === "timetable") {
-                    if (ttTemplate === "custom") return exportRawHtmlDocx(customHtmlMap["timetable"], "timetable.docx");
+                    if (ttTemplate === "custom")
+                      return exportRawHtmlDocx(customHtmlMap["timetable"], "timetable.docx");
                     return exportTimetableDocx(ttHeader, ttData, ttTemplate, logoUrl, customConfig);
                   }
                 }}
@@ -2784,16 +2845,22 @@ function Index() {
                 size="sm"
                 onClick={() => {
                   if (mode === "exam") {
-                    if (examTemplate === "custom") return exportRawHtmlPdf(customHtmlMap["exam"], `${examHdr!.subject}-${examHdr!.className}-exam.pdf`);
+                    if (examTemplate === "custom")
+                      return exportRawHtmlPdf(
+                        customHtmlMap["exam"],
+                        `${examHdr!.subject}-${examHdr!.className}-exam.pdf`,
+                      );
                     return exportExamPdf(`${examHdr!.subject}-${examHdr!.className}-exam.pdf`);
                   }
                   if (mode === "hhw") {
-                    if (hhwTemplate === "custom") return exportRawHtmlPdf(customHtmlMap["hhw"], `${hhwHdr!.className}-holiday-homework.pdf`);
+                    if (hhwTemplate === "custom")
+                      return exportRawHtmlPdf(
+                        customHtmlMap["hhw"],
+                        `${hhwHdr!.className}-holiday-homework.pdf`,
+                      );
                     return exportHHWPdf(`${hhwHdr!.className}-holiday-homework.pdf`);
                   }
-                  if (mode === "timetable") {
-                    if (ttTemplate === "custom") return exportRawHtmlPdf(customHtmlMap["timetable"], "timetable.pdf");
-                  }
+
                   const fname =
                     resumeMode === "job"
                       ? `${resumeData.name || "Resume"}_Resume.pdf`
@@ -2801,7 +2868,11 @@ function Index() {
                   if (mode === "resume" && resumeMode === "job" && resumeTemplate === "custom") {
                     return exportRawHtmlPdf(customHtmlMap["resume"], fname);
                   }
-                  if (mode === "resume" && resumeMode === "marriage" && biodataTemplate === "custom") {
+                  if (
+                    mode === "resume" &&
+                    resumeMode === "wedding" &&
+                    biodataTemplate === "custom"
+                  ) {
                     return exportRawHtmlPdf(customHtmlMap["biodata"], fname);
                   }
                   return exportResumePdf(fname, resumeMode);
@@ -2814,7 +2885,11 @@ function Index() {
                 variant="outline"
                 onClick={() => {
                   if (mode === "exam") {
-                    if (examTemplate === "custom") return exportRawHtmlDocx(customHtmlMap["exam"], `${examHdr!.subject}-${examHdr!.className}-exam.docx`);
+                    if (examTemplate === "custom")
+                      return exportRawHtmlDocx(
+                        customHtmlMap["exam"],
+                        `${examHdr!.subject}-${examHdr!.className}-exam.docx`,
+                      );
                     return exportExamDocx(
                       examHdr!,
                       paper!,
@@ -2826,18 +2901,33 @@ function Index() {
                     );
                   }
                   if (mode === "hhw") {
-                    if (hhwTemplate === "custom") return exportRawHtmlDocx(customHtmlMap["hhw"], `${hhwHdr!.className}-holiday-homework.docx`);
+                    if (hhwTemplate === "custom")
+                      return exportRawHtmlDocx(
+                        customHtmlMap["hhw"],
+                        `${hhwHdr!.className}-holiday-homework.docx`,
+                      );
                     return exportHHWDocx(hhwHdr!, packet!, hhwTemplate, logoUrl, customConfig);
                   }
-                  if (mode === "timetable") {
-                    if (ttTemplate === "custom") return exportRawHtmlDocx(customHtmlMap["timetable"], "timetable.docx");
-                  }
+
                   if (resumeMode === "job") {
-                    if (resumeTemplate === "custom") return exportRawHtmlDocx(customHtmlMap["resume"], `${resumeData.name || "Resume"}_Resume.docx`);
+                    if (resumeTemplate === "custom")
+                      return exportRawHtmlDocx(
+                        customHtmlMap["resume"],
+                        `${resumeData.name || "Resume"}_Resume.docx`,
+                      );
                     return exportResumeDocx(resumeData, resumeTemplate, themeColor, customConfig);
                   } else {
-                    if (biodataTemplate === "custom") return exportRawHtmlDocx(customHtmlMap["biodata"], `${biodataData.name || "Biodata"}_Biodata.docx`);
-                    return exportBiodataDocx(biodataData, biodataTemplate, themeColor, customConfig);
+                    if (biodataTemplate === "custom")
+                      return exportRawHtmlDocx(
+                        customHtmlMap["biodata"],
+                        `${biodataData.name || "Biodata"}_Biodata.docx`,
+                      );
+                    return exportBiodataDocx(
+                      biodataData,
+                      biodataTemplate,
+                      themeColor,
+                      customConfig,
+                    );
                   }
                 }}
               >
@@ -2861,7 +2951,9 @@ function Index() {
                     <CKEditor
                       editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
                       initData={customHtmlMap["exam"]}
-                      onChange={(e: any) => setCustomHtmlMap({ ...customHtmlMap, exam: e.editor.getData() })}
+                      onChange={(e: any) =>
+                        setCustomHtmlMap({ ...customHtmlMap, exam: e.editor.getData() })
+                      }
                     />
                   </div>
                 </div>
@@ -3173,7 +3265,9 @@ function Index() {
                     <CKEditor
                       editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
                       initData={customHtmlMap["hhw"]}
-                      onChange={(e: any) => setCustomHtmlMap({ ...customHtmlMap, hhw: e.editor.getData() })}
+                      onChange={(e: any) =>
+                        setCustomHtmlMap({ ...customHtmlMap, hhw: e.editor.getData() })
+                      }
                     />
                   </div>
                 </div>
@@ -3362,7 +3456,9 @@ function Index() {
                     <CKEditor
                       editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
                       initData={customHtmlMap["timetable"]}
-                      onChange={(e: any) => setCustomHtmlMap({ ...customHtmlMap, timetable: e.editor.getData() })}
+                      onChange={(e: any) =>
+                        setCustomHtmlMap({ ...customHtmlMap, timetable: e.editor.getData() })
+                      }
                     />
                   </div>
                 </div>
@@ -3427,7 +3523,8 @@ function Index() {
             </div>
           ) : mode === "resume" ? (
             <div className="space-y-4">
-              {(resumeMode === "job" && resumeTemplate === "custom") || (resumeMode === "marriage" && biodataTemplate === "custom") ? (
+              {(resumeMode === "job" && resumeTemplate === "custom") ||
+              (resumeMode === "wedding" && biodataTemplate === "custom") ? (
                 <div className="border rounded-xl overflow-hidden bg-white shadow-lg min-h-[800px] flex flex-col">
                   <div className="bg-primary/10 p-3 border-b text-sm font-semibold text-primary flex items-center gap-2">
                     <Paintbrush className="h-4 w-4" />
@@ -3436,8 +3533,15 @@ function Index() {
                   <div className="flex-1">
                     <CKEditor
                       editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
-                      initData={resumeMode === "job" ? customHtmlMap["resume"] : customHtmlMap["biodata"]}
-                      onChange={(e: any) => setCustomHtmlMap({ ...customHtmlMap, [resumeMode === "job" ? "resume" : "biodata"]: e.editor.getData() })}
+                      initData={
+                        resumeMode === "job" ? customHtmlMap["resume"] : customHtmlMap["biodata"]
+                      }
+                      onChange={(e: any) =>
+                        setCustomHtmlMap({
+                          ...customHtmlMap,
+                          [resumeMode === "job" ? "resume" : "biodata"]: e.editor.getData(),
+                        })
+                      }
                     />
                   </div>
                 </div>
@@ -3466,7 +3570,12 @@ function Index() {
                       Real-time generation audit logs for exam papers and holiday homework.
                     </p>
                   </div>
-                  <Button variant="outline" size="sm" onClick={fetchAdminData} disabled={adminLoading}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={fetchAdminData}
+                    disabled={adminLoading}
+                  >
                     Refresh Logs
                   </Button>
                 </div>
@@ -3486,10 +3595,18 @@ function Index() {
                         <table className="w-full text-xs text-left border-collapse">
                           <thead>
                             <tr className="bg-muted/50 border-b">
-                              <th className="p-3 font-semibold text-muted-foreground w-[180px]">Timestamp</th>
-                              <th className="p-3 font-semibold text-muted-foreground w-[200px]">User</th>
-                              <th className="p-3 font-semibold text-muted-foreground w-[120px]">Action</th>
-                              <th className="p-3 font-semibold text-muted-foreground">Details / Parameters</th>
+                              <th className="p-3 font-semibold text-muted-foreground w-[180px]">
+                                Timestamp
+                              </th>
+                              <th className="p-3 font-semibold text-muted-foreground w-[200px]">
+                                User
+                              </th>
+                              <th className="p-3 font-semibold text-muted-foreground w-[120px]">
+                                Action
+                              </th>
+                              <th className="p-3 font-semibold text-muted-foreground">
+                                Details / Parameters
+                              </th>
                             </tr>
                           </thead>
                           <tbody className="divide-y">
@@ -3502,11 +3619,13 @@ function Index() {
                                   {log.userEmail}
                                 </td>
                                 <td className="p-3">
-                                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium border ${
-                                    log.action?.includes("exam")
-                                      ? "bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/30 dark:text-indigo-400 dark:border-indigo-800"
-                                      : "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800"
-                                  }`}>
+                                  <span
+                                    className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium border ${
+                                      log.action?.includes("exam")
+                                        ? "bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/30 dark:text-indigo-400 dark:border-indigo-800"
+                                        : "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800"
+                                    }`}
+                                  >
                                     {log.action}
                                   </span>
                                 </td>

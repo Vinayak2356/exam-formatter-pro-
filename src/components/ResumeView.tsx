@@ -95,11 +95,11 @@ export function ResumeView({
   const isCustom = template === "custom" && customConfig;
 
   // Custom styling attributes
-  const layoutStyle = isCustom ? (customConfig.layoutStyle || "sidebar-right") : "sidebar-right";
-  const fontSize = isCustom ? (customConfig.fontSize || "base") : "base";
-  const spacing = isCustom ? (customConfig.spacing || "normal") : "normal";
-  const skillBadgeStyle = isCustom ? (customConfig.skillBadgeStyle || "pill") : "pill";
-  const profilePicShape = isCustom ? (customConfig.profilePicShape || "circle") : "circle";
+  const layoutStyle = isCustom ? customConfig.layoutStyle || "sidebar-right" : "sidebar-right";
+  const fontSize = isCustom ? customConfig.fontSize || "base" : "base";
+  const spacing = isCustom ? customConfig.spacing || "normal" : "normal";
+  const skillBadgeStyle = isCustom ? customConfig.skillBadgeStyle || "pill" : "pill";
+  const profilePicShape = isCustom ? customConfig.profilePicShape || "circle" : "circle";
 
   const visibleSections = {
     summary: true,
@@ -121,9 +121,33 @@ export function ResumeView({
   };
 
   const fsConfig = {
-    sm: { container: "8.5pt", name: "18pt", secTitle: "10pt", itemTitle: "9.5pt", desc: "8.5pt", contact: "8pt", sub: "8.5pt" },
-    base: { container: "10pt", name: "24pt", secTitle: "11.5pt", itemTitle: "11pt", desc: "9.5pt", contact: "9pt", sub: "9.5pt" },
-    lg: { container: "11.5pt", name: "30pt", secTitle: "13.5pt", itemTitle: "12.5pt", desc: "10.5pt", contact: "10pt", sub: "10.5pt" },
+    sm: {
+      container: "8.5pt",
+      name: "18pt",
+      secTitle: "10pt",
+      itemTitle: "9.5pt",
+      desc: "8.5pt",
+      contact: "8pt",
+      sub: "8.5pt",
+    },
+    base: {
+      container: "10pt",
+      name: "24pt",
+      secTitle: "11.5pt",
+      itemTitle: "11pt",
+      desc: "9.5pt",
+      contact: "9pt",
+      sub: "9.5pt",
+    },
+    lg: {
+      container: "11.5pt",
+      name: "30pt",
+      secTitle: "13.5pt",
+      itemTitle: "12.5pt",
+      desc: "10.5pt",
+      contact: "10pt",
+      sub: "10.5pt",
+    },
   }[fontSize];
 
   const spacingConfig = {
@@ -182,7 +206,8 @@ export function ResumeView({
 
   const mainColStyle: React.CSSProperties = isCustom
     ? {
-        gridColumn: layoutStyle === "sidebar-left" ? 2 : layoutStyle === "sidebar-right" ? 1 : undefined,
+        gridColumn:
+          layoutStyle === "sidebar-left" ? 2 : layoutStyle === "sidebar-right" ? 1 : undefined,
         width: "100%",
         display: "flex",
         flexDirection: "column",
@@ -192,7 +217,8 @@ export function ResumeView({
 
   const sideColStyle: React.CSSProperties = isCustom
     ? {
-        gridColumn: layoutStyle === "sidebar-left" ? 1 : layoutStyle === "sidebar-right" ? 2 : undefined,
+        gridColumn:
+          layoutStyle === "sidebar-left" ? 1 : layoutStyle === "sidebar-right" ? 2 : undefined,
         width: "100%",
         display: "flex",
         flexDirection: "column",
@@ -217,7 +243,8 @@ export function ResumeView({
           skillBadgeStyle === "pill" || skillBadgeStyle === "square"
             ? `1px solid ${customConfig.accentColor}30`
             : undefined,
-        borderRadius: skillBadgeStyle === "pill" ? "9999px" : skillBadgeStyle === "square" ? "4px" : "0px",
+        borderRadius:
+          skillBadgeStyle === "pill" ? "9999px" : skillBadgeStyle === "square" ? "4px" : "0px",
         padding:
           skillBadgeStyle === "pill" || skillBadgeStyle === "square"
             ? "0.25rem 0.6rem"
@@ -297,13 +324,21 @@ export function ResumeView({
             <div className="res-header-content">
               <h1
                 className="res-name"
-                style={isCustom ? { color: customConfig.accentColor, fontSize: fsConfig.name } : undefined}
+                style={
+                  isCustom
+                    ? { color: customConfig.accentColor, fontSize: fsConfig.name }
+                    : undefined
+                }
               >
                 {resumeData.name || "YOUR NAME"}
               </h1>
               <p
                 className="res-title"
-                style={isCustom ? { color: customConfig.secondaryColor, fontSize: fsConfig.sub } : undefined}
+                style={
+                  isCustom
+                    ? { color: customConfig.secondaryColor, fontSize: fsConfig.sub }
+                    : undefined
+                }
               >
                 {resumeData.title || "Professional Title"}
               </p>
@@ -335,10 +370,15 @@ export function ResumeView({
 
           {/* Summary */}
           {resumeData.summary && visibleSections.summary && (
-            <section className="res-section res-summary" style={isCustom ? { marginBottom: spacingConfig.secMargin } : undefined}>
+            <section
+              className="res-section res-summary"
+              style={isCustom ? { marginBottom: spacingConfig.secMargin } : undefined}
+            >
               <p
                 className="res-summary-text"
-                style={isCustom ? { color: customConfig.textColor, fontSize: fsConfig.desc } : undefined}
+                style={
+                  isCustom ? { color: customConfig.textColor, fontSize: fsConfig.desc } : undefined
+                }
               >
                 {resumeData.summary}
               </p>
@@ -350,7 +390,10 @@ export function ResumeView({
             <div className="res-main-col" style={mainColStyle}>
               {/* Experience */}
               {resumeData.experience?.length > 0 && visibleSections.experience && (
-                <section className="res-section" style={isCustom ? { marginBottom: spacingConfig.secMargin } : undefined}>
+                <section
+                  className="res-section"
+                  style={isCustom ? { marginBottom: spacingConfig.secMargin } : undefined}
+                >
                   <h2
                     className="res-sec-title"
                     style={
@@ -368,22 +411,50 @@ export function ResumeView({
                   </h2>
                   <div className="res-list">
                     {resumeData.experience.map((exp, idx) => (
-                      <div key={idx} className="res-item" style={isCustom ? { marginBottom: spacingConfig.itemMargin } : undefined}>
+                      <div
+                        key={idx}
+                        className="res-item"
+                        style={isCustom ? { marginBottom: spacingConfig.itemMargin } : undefined}
+                      >
                         <div className="res-item-header">
-                          <h3 className="res-item-title" style={isCustom ? { fontSize: fsConfig.itemTitle, color: customConfig.textColor } : undefined}>{exp.role}</h3>
+                          <h3
+                            className="res-item-title"
+                            style={
+                              isCustom
+                                ? { fontSize: fsConfig.itemTitle, color: customConfig.textColor }
+                                : undefined
+                            }
+                          >
+                            {exp.role}
+                          </h3>
                           <span
                             className="res-item-date"
-                            style={isCustom ? { color: customConfig.accentColor, fontSize: fsConfig.desc } : undefined}
+                            style={
+                              isCustom
+                                ? { color: customConfig.accentColor, fontSize: fsConfig.desc }
+                                : undefined
+                            }
                           >
                             {exp.startYear} – {exp.endYear}
                           </span>
                         </div>
-                        <p className="res-item-sub" style={isCustom ? { fontSize: fsConfig.desc, color: customConfig.secondaryColor } : undefined}>
+                        <p
+                          className="res-item-sub"
+                          style={
+                            isCustom
+                              ? { fontSize: fsConfig.desc, color: customConfig.secondaryColor }
+                              : undefined
+                          }
+                        >
                           {exp.company} | {exp.location}
                         </p>
                         <p
                           className="res-item-desc"
-                          style={isCustom ? { color: customConfig.textColor, fontSize: fsConfig.desc } : undefined}
+                          style={
+                            isCustom
+                              ? { color: customConfig.textColor, fontSize: fsConfig.desc }
+                              : undefined
+                          }
                         >
                           {exp.description}
                         </p>
@@ -395,7 +466,10 @@ export function ResumeView({
 
               {/* Projects */}
               {resumeData.projects?.length > 0 && visibleSections.projects && (
-                <section className="res-section" style={isCustom ? { marginBottom: spacingConfig.secMargin } : undefined}>
+                <section
+                  className="res-section"
+                  style={isCustom ? { marginBottom: spacingConfig.secMargin } : undefined}
+                >
                   <h2
                     className="res-sec-title"
                     style={
@@ -413,16 +487,38 @@ export function ResumeView({
                   </h2>
                   <div className="res-list">
                     {resumeData.projects.map((proj, idx) => (
-                      <div key={idx} className="res-item" style={isCustom ? { marginBottom: spacingConfig.itemMargin } : undefined}>
+                      <div
+                        key={idx}
+                        className="res-item"
+                        style={isCustom ? { marginBottom: spacingConfig.itemMargin } : undefined}
+                      >
                         <div className="res-item-header">
-                          <h3 className="res-item-title" style={isCustom ? { fontSize: fsConfig.itemTitle, color: customConfig.textColor } : undefined}>{proj.title}</h3>
+                          <h3
+                            className="res-item-title"
+                            style={
+                              isCustom
+                                ? { fontSize: fsConfig.itemTitle, color: customConfig.textColor }
+                                : undefined
+                            }
+                          >
+                            {proj.title}
+                          </h3>
                           {proj.link && (
-                            <span className="res-item-link text-xs italic" style={isCustom ? { fontSize: fsConfig.desc } : undefined}>{proj.link}</span>
+                            <span
+                              className="res-item-link text-xs italic"
+                              style={isCustom ? { fontSize: fsConfig.desc } : undefined}
+                            >
+                              {proj.link}
+                            </span>
                           )}
                         </div>
                         <p
                           className="res-item-desc"
-                          style={isCustom ? { color: customConfig.textColor, fontSize: fsConfig.desc } : undefined}
+                          style={
+                            isCustom
+                              ? { color: customConfig.textColor, fontSize: fsConfig.desc }
+                              : undefined
+                          }
                         >
                           {proj.description}
                         </p>
@@ -437,7 +533,10 @@ export function ResumeView({
             <div className="res-side-col" style={sideColStyle}>
               {/* Education */}
               {resumeData.education?.length > 0 && visibleSections.education && (
-                <section className="res-section" style={isCustom ? { marginBottom: spacingConfig.secMargin } : undefined}>
+                <section
+                  className="res-section"
+                  style={isCustom ? { marginBottom: spacingConfig.secMargin } : undefined}
+                >
                   <h2
                     className="res-sec-title"
                     style={
@@ -455,12 +554,39 @@ export function ResumeView({
                   </h2>
                   <div className="res-list">
                     {resumeData.education.map((edu, idx) => (
-                      <div key={idx} className="res-item-side" style={isCustom ? { marginBottom: spacingConfig.itemMargin } : undefined}>
-                        <h3 className="res-item-side-title" style={isCustom ? { fontSize: fsConfig.itemTitle, color: customConfig.textColor } : undefined}>
+                      <div
+                        key={idx}
+                        className="res-item-side"
+                        style={isCustom ? { marginBottom: spacingConfig.itemMargin } : undefined}
+                      >
+                        <h3
+                          className="res-item-side-title"
+                          style={
+                            isCustom
+                              ? { fontSize: fsConfig.itemTitle, color: customConfig.textColor }
+                              : undefined
+                          }
+                        >
                           {edu.degree} in {edu.field}
                         </h3>
-                        <p className="res-item-side-school" style={isCustom ? { fontSize: fsConfig.desc, color: customConfig.secondaryColor } : undefined}>{edu.school}</p>
-                        <p className="res-item-side-date" style={isCustom ? { fontSize: fsConfig.desc, color: customConfig.secondaryColor } : undefined}>
+                        <p
+                          className="res-item-side-school"
+                          style={
+                            isCustom
+                              ? { fontSize: fsConfig.desc, color: customConfig.secondaryColor }
+                              : undefined
+                          }
+                        >
+                          {edu.school}
+                        </p>
+                        <p
+                          className="res-item-side-date"
+                          style={
+                            isCustom
+                              ? { fontSize: fsConfig.desc, color: customConfig.secondaryColor }
+                              : undefined
+                          }
+                        >
                           {edu.startYear} – {edu.endYear}
                           {edu.grade && ` | Grade: ${edu.grade}`}
                         </p>
@@ -472,7 +598,10 @@ export function ResumeView({
 
               {/* Skills */}
               {resumeData.skills?.length > 0 && visibleSections.skills && (
-                <section className="res-section" style={isCustom ? { marginBottom: spacingConfig.secMargin } : undefined}>
+                <section
+                  className="res-section"
+                  style={isCustom ? { marginBottom: spacingConfig.secMargin } : undefined}
+                >
                   <h2
                     className="res-sec-title"
                     style={
@@ -495,7 +624,11 @@ export function ResumeView({
                         className={isCustom ? "" : "res-skill-badge"}
                         style={isCustom ? badgeStyle : undefined}
                       >
-                        {isCustom && skillBadgeStyle === "simple" && <span style={{ color: customConfig.accentColor, marginRight: "0.25rem" }}>•</span>}
+                        {isCustom && skillBadgeStyle === "simple" && (
+                          <span style={{ color: customConfig.accentColor, marginRight: "0.25rem" }}>
+                            •
+                          </span>
+                        )}
                         {skill}
                       </span>
                     ))}
@@ -505,7 +638,10 @@ export function ResumeView({
 
               {/* Languages */}
               {resumeData.languages?.length > 0 && visibleSections.languages && (
-                <section className="res-section" style={isCustom ? { marginBottom: spacingConfig.secMargin } : undefined}>
+                <section
+                  className="res-section"
+                  style={isCustom ? { marginBottom: spacingConfig.secMargin } : undefined}
+                >
                   <h2
                     className="res-sec-title"
                     style={
@@ -528,7 +664,11 @@ export function ResumeView({
                         className={isCustom ? "" : "res-lang-badge"}
                         style={isCustom ? badgeStyle : undefined}
                       >
-                        {isCustom && skillBadgeStyle === "simple" && <span style={{ color: customConfig.accentColor, marginRight: "0.25rem" }}>•</span>}
+                        {isCustom && skillBadgeStyle === "simple" && (
+                          <span style={{ color: customConfig.accentColor, marginRight: "0.25rem" }}>
+                            •
+                          </span>
+                        )}
                         {lang}
                       </span>
                     ))}

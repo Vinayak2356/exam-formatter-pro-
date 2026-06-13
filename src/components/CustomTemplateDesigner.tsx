@@ -315,23 +315,62 @@ const LayoutPreviews: Record<NonNullable<CustomTemplateConfig["layoutStyle"]>, R
   ),
 };
 
-const SkillPreviews: Record<NonNullable<CustomTemplateConfig["skillBadgeStyle"]>, React.ReactNode> = {
+const SkillPreviews: Record<
+  NonNullable<CustomTemplateConfig["skillBadgeStyle"]>,
+  React.ReactNode
+> = {
   pill: (
     <svg viewBox="0 0 64 40" className="w-full h-full">
       <rect width="64" height="40" fill="white" />
       <rect x="6" y="14" width="22" height="12" rx="6" fill="#1E2761" opacity="0.1" />
-      <rect x="6" y="14" width="22" height="12" rx="6" fill="none" stroke="#1E2761" strokeWidth="1" />
+      <rect
+        x="6"
+        y="14"
+        width="22"
+        height="12"
+        rx="6"
+        fill="none"
+        stroke="#1E2761"
+        strokeWidth="1"
+      />
       <rect x="34" y="14" width="24" height="12" rx="6" fill="#1E2761" opacity="0.1" />
-      <rect x="34" y="14" width="24" height="12" rx="6" fill="none" stroke="#1E2761" strokeWidth="1" />
+      <rect
+        x="34"
+        y="14"
+        width="24"
+        height="12"
+        rx="6"
+        fill="none"
+        stroke="#1E2761"
+        strokeWidth="1"
+      />
     </svg>
   ),
   square: (
     <svg viewBox="0 0 64 40" className="w-full h-full">
       <rect width="64" height="40" fill="white" />
       <rect x="6" y="14" width="22" height="12" rx="2" fill="#1E2761" opacity="0.1" />
-      <rect x="6" y="14" width="22" height="12" rx="2" fill="none" stroke="#1E2761" strokeWidth="1" />
+      <rect
+        x="6"
+        y="14"
+        width="22"
+        height="12"
+        rx="2"
+        fill="none"
+        stroke="#1E2761"
+        strokeWidth="1"
+      />
       <rect x="34" y="14" width="24" height="12" rx="2" fill="#1E2761" opacity="0.1" />
-      <rect x="34" y="14" width="24" height="12" rx="2" fill="none" stroke="#1E2761" strokeWidth="1" />
+      <rect
+        x="34"
+        y="14"
+        width="24"
+        height="12"
+        rx="2"
+        fill="none"
+        stroke="#1E2761"
+        strokeWidth="1"
+      />
     </svg>
   ),
   underline: (
@@ -548,8 +587,16 @@ export function CustomTemplateDesigner({ config, onChange }: CustomTemplateDesig
           <OptionGrid
             options={[
               { id: "single" as const, label: "Single Column", preview: LayoutPreviews.single },
-              { id: "sidebar-left" as const, label: "Left Sidebar", preview: LayoutPreviews["sidebar-left"] },
-              { id: "sidebar-right" as const, label: "Right Sidebar", preview: LayoutPreviews["sidebar-right"] },
+              {
+                id: "sidebar-left" as const,
+                label: "Left Sidebar",
+                preview: LayoutPreviews["sidebar-left"],
+              },
+              {
+                id: "sidebar-right" as const,
+                label: "Right Sidebar",
+                preview: LayoutPreviews["sidebar-right"],
+              },
             ]}
             value={config.layoutStyle || "sidebar-right"}
             onChange={(v) => set("layoutStyle", v)}
@@ -649,14 +696,16 @@ export function CustomTemplateDesigner({ config, onChange }: CustomTemplateDesig
             👁️ Hide / Show Sections
           </h3>
           <div className="grid grid-cols-2 gap-2 text-xs">
-            {([
-              { key: "summary", label: "Summary" },
-              { key: "experience", label: "Work Experience" },
-              { key: "projects", label: "Key Projects" },
-              { key: "education", label: "Education" },
-              { key: "skills", label: "Skills" },
-              { key: "languages", label: "Languages" },
-            ] as const).map(({ key, label }) => {
+            {(
+              [
+                { key: "summary", label: "Summary" },
+                { key: "experience", label: "Work Experience" },
+                { key: "projects", label: "Key Projects" },
+                { key: "education", label: "Education" },
+                { key: "skills", label: "Skills" },
+                { key: "languages", label: "Languages" },
+              ] as const
+            ).map(({ key, label }) => {
               const currentVisible = config.visibleSections || {
                 summary: true,
                 experience: true,
@@ -690,13 +739,15 @@ export function CustomTemplateDesigner({ config, onChange }: CustomTemplateDesig
             ✍️ Rename Section Headings
           </h3>
           <div className="space-y-2">
-            {([
-              { key: "experience", label: "Work Experience", placeholder: "Work Experience" },
-              { key: "projects", label: "Key Projects", placeholder: "Key Projects" },
-              { key: "education", label: "Education", placeholder: "Education" },
-              { key: "skills", label: "Skills", placeholder: "Skills" },
-              { key: "languages", label: "Languages", placeholder: "Languages" },
-            ] as const).map(({ key, label, placeholder }) => {
+            {(
+              [
+                { key: "experience", label: "Work Experience", placeholder: "Work Experience" },
+                { key: "projects", label: "Key Projects", placeholder: "Key Projects" },
+                { key: "education", label: "Education", placeholder: "Education" },
+                { key: "skills", label: "Skills", placeholder: "Skills" },
+                { key: "languages", label: "Languages", placeholder: "Languages" },
+              ] as const
+            ).map(({ key, label, placeholder }) => {
               const currentTitles = config.sectionTitles || {
                 experience: "Work Experience",
                 projects: "Key Projects",

@@ -14,7 +14,7 @@ export const Route = createFileRoute("/api/public/export-docx")({
           }
 
           const HTMLtoDOCX = (await import("html-to-docx")).default;
-          
+
           const fileBuffer = await HTMLtoDOCX(body.html, null, {
             table: { row: { cantSplit: true } },
             footer: true,
@@ -23,7 +23,8 @@ export const Route = createFileRoute("/api/public/export-docx")({
 
           return new Response(fileBuffer, {
             headers: {
-              "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+              "Content-Type":
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
               "Content-Disposition": 'attachment; filename="document.docx"',
             },
           });
