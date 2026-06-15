@@ -2756,70 +2756,7 @@ function Index() {
 
           {hasOutput && (
             <div className="grid grid-cols-2 gap-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  if (mode === "exam") {
-                    if (examTemplate === "custom")
-                      return exportRawHtmlPdf(
-                        customHtmlMap["exam"],
-                        `${examHdr!.subject}-${examHdr!.className}-exam.pdf`,
-                      );
-                    return exportExamPdf(`${examHdr!.subject}-${examHdr!.className}-exam.pdf`);
-                  }
-                  if (mode === "hhw") {
-                    if (hhwTemplate === "custom")
-                      return exportRawHtmlPdf(
-                        customHtmlMap["hhw"],
-                        `${hhwHdr!.className}-holiday-homework.pdf`,
-                      );
-                    return exportHHWPdf(`${hhwHdr!.className}-holiday-homework.pdf`);
-                  }
-                  if (mode === "timetable") {
-                    if (ttTemplate === "custom")
-                      return exportRawHtmlPdf(customHtmlMap["timetable"], "timetable.pdf");
-                    return exportTimetablePdf(`${ttHeader.className}-timetable.pdf`);
-                  }
-                }}
-              >
-                <Download className="mr-2 h-4 w-4" /> PDF
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  if (mode === "exam") {
-                    if (examTemplate === "custom")
-                      return exportRawHtmlDocx(
-                        customHtmlMap["exam"],
-                        `${examHdr!.subject}-${examHdr!.className}-exam.docx`,
-                      );
-                    return exportExamDocx(
-                      examHdr!,
-                      paper!,
-                      examTemplate,
-                      logoUrl,
-                      customConfig,
-                      footer,
-                      themeColor,
-                    );
-                  }
-                  if (mode === "hhw") {
-                    if (hhwTemplate === "custom")
-                      return exportRawHtmlDocx(
-                        customHtmlMap["hhw"],
-                        `${hhwHdr!.className}-holiday-homework.docx`,
-                      );
-                    return exportHHWDocx(hhwHdr!, packet!, hhwTemplate, logoUrl, customConfig);
-                  }
-                  if (mode === "timetable") {
-                    if (ttTemplate === "custom")
-                      return exportRawHtmlDocx(customHtmlMap["timetable"], "timetable.docx");
-                    return exportTimetableDocx(ttHeader, ttData, ttTemplate, logoUrl, customConfig);
-                  }
-                }}
-              >
-                <FileType className="mr-2 h-4 w-4" /> DOCX
-              </Button>
+              
               <Button variant="outline" className="col-span-2" onClick={() => window.print()}>
                 <Printer className="mr-2 h-4 w-4" /> Print
               </Button>
@@ -2875,59 +2812,7 @@ function Index() {
               >
                 <Download className="mr-1.5 h-4 w-4" /> PDF
               </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => {
-                  if (mode === "exam") {
-                    if (examTemplate === "custom")
-                      return exportRawHtmlDocx(
-                        customHtmlMap["exam"],
-                        `${examHdr!.subject}-${examHdr!.className}-exam.docx`,
-                      );
-                    return exportExamDocx(
-                      examHdr!,
-                      paper!,
-                      examTemplate,
-                      logoUrl,
-                      customConfig,
-                      footer,
-                      themeColor,
-                    );
-                  }
-                  if (mode === "hhw") {
-                    if (hhwTemplate === "custom")
-                      return exportRawHtmlDocx(
-                        customHtmlMap["hhw"],
-                        `${hhwHdr!.className}-holiday-homework.docx`,
-                      );
-                    return exportHHWDocx(hhwHdr!, packet!, hhwTemplate, logoUrl, customConfig);
-                  }
-
-                  if (resumeMode === "job") {
-                    if (resumeTemplate === "custom")
-                      return exportRawHtmlDocx(
-                        customHtmlMap["resume"],
-                        `${resumeData.name || "Resume"}_Resume.docx`,
-                      );
-                    return exportResumeDocx(resumeData, resumeTemplate, themeColor, customConfig);
-                  } else {
-                    if (biodataTemplate === "custom")
-                      return exportRawHtmlDocx(
-                        customHtmlMap["biodata"],
-                        `${biodataData.name || "Biodata"}_Biodata.docx`,
-                      );
-                    return exportBiodataDocx(
-                      biodataData,
-                      biodataTemplate,
-                      themeColor,
-                      customConfig,
-                    );
-                  }
-                }}
-              >
-                <FileType className="mr-1.5 h-4 w-4" /> DOCX
-              </Button>
+              
               <Button size="sm" variant="ghost" onClick={() => window.print()}>
                 <Printer className="mr-1.5 h-4 w-4" /> Print
               </Button>

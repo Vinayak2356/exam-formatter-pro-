@@ -35,7 +35,11 @@ export function EditorModal({
           <Maximize className="w-4 h-4 text-muted-foreground" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[95vw] w-[1400px] h-[95vh] flex flex-col p-4 sm:p-6 bg-slate-50 dark:bg-slate-900">
+      <DialogContent 
+        onInteractOutside={(e) => e.preventDefault()} 
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        className="max-w-[95vw] w-[1400px] h-[95vh] flex flex-col p-4 sm:p-6 bg-slate-50 dark:bg-slate-900"
+      >
         <DialogHeader className="mb-2">
           <DialogTitle className="text-xl">{title}</DialogTitle>
         </DialogHeader>
