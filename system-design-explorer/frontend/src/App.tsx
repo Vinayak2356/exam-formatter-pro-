@@ -1,0 +1,49 @@
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { Layout } from './components/layout/Layout';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import Explorer from './pages/Explorer';
+
+function ProtectedRoute({ children, requireAdmin = false }: { children: JSX.Element, requireAdmin?: boolean }) {
+  const { isAuthenticated, role } = useAuth();
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  if (requireAdmin && role !== 'ADMIN') {
+    return <Navigate to="/" replace />;
+  }
+  
+  return <Layout>{children}</Layout>;
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          
+          <Route path="/" element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/explorer" element={
+            <ProtectedRoute>
+              <Explorer />
+            </ProtectedRoute>
+          } />
+
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
+  );
+}
+
+export default App;
