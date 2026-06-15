@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import {
   ExamPaperView,
   type ExamHeader,
@@ -62,6 +63,8 @@ import {
   Mail,
   LogOut,
   Paintbrush,
+  Save,
+  FolderOpen,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -250,7 +253,100 @@ function Index() {
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [instructions, setInstructions] = useState("");
 
-  const [mode, setMode] = useState<"exam" | "hhw" | "timetable" | "resume" | "admin">("exam");
+  const [mode, setMode] = useState<"exam" | "hhw" | "timetable" | "resume" | "admin" | "saved">("exam");
+  const [savedTemplates, setSavedTemplates] = useState<any[]>([]);
+  const [savedTemplatesLoading, setSavedTemplatesLoading] = useState(false);
+  const [saveTemplateTitle, setSaveTemplateTitle] = useState("");
+  const [isSavingTemplate, setIsSavingTemplate] = useState(false);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+
+  const fetchSavedTemplates = async () => {
+    const token = localStorage.getItem("auth_token");
+    if (!token) return;
+    setSavedTemplatesLoading(true);
+    try {
+      const res = await fetch("/api/user/templates", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setSavedTemplates(data.templates || []);
+    } catch {
+      toast.error("Failed to load saved templates.");
+    } finally {
+      setSavedTemplatesLoading(false);
+    }
+  };
+
+  const handleSaveTemplate = async () => {
+    if (!saveTemplateTitle) {
+      toast.error("Please enter a name for your template.");
+      return;
+    }
+    const token = localStorage.getItem("auth_token");
+    if (!token) return;
+    setIsSavingTemplate(true);
+    
+    let content = "";
+    if (mode === "exam") content = customHtmlMap["exam"];
+    else if (mode === "hhw") content = customHtmlMap["hhw"];
+    else if (mode === "timetable") content = customHtmlMap["timetable"];
+    else if (mode === "resume") {
+      content = resumeMode === "job" ? customHtmlMap["resume"] : customHtmlMap["biodata"];
+    }
+
+    try {
+      const res = await fetch("/api/user/templates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ title: saveTemplateTitle, mode, content }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      toast.success("Template saved successfully!");
+      setShowSaveDialog(false);
+      setSaveTemplateTitle("");
+      if (mode === "saved") fetchSavedTemplates();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to save template.");
+    } finally {
+      setIsSavingTemplate(false);
+    }
+  };
+
+  const handleDeleteTemplate = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this template?")) return;
+    const token = localStorage.getItem("auth_token");
+    try {
+      const res = await fetch(`/api/user/templates?id=${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        toast.success("Template deleted!");
+        fetchSavedTemplates();
+      } else {
+        toast.error("Failed to delete template");
+      }
+    } catch {
+      toast.error("Failed to delete template");
+    }
+  };
+
+  const handleLoadTemplate = (template: any) => {
+    const mapKey = template.mode === "resume" ? "resume" : template.mode;
+    setCustomHtmlMap(prev => ({ ...prev, [mapKey]: template.content }));
+    setMode(template.mode);
+    if (template.mode === "exam") setExamTemplate("custom");
+    if (template.mode === "hhw") setHhwTemplate("custom" as any);
+    if (template.mode === "timetable") setTtTemplate("custom" as any);
+    if (template.mode === "resume") setResumeTemplate("custom" as any);
+    toast.success("Template loaded successfully! You can now continue editing.");
+  };
+
+  useEffect(() => {
+    if (mode === "saved") fetchSavedTemplates();
+  }, [mode]);
+
   const [logs, setLogs] = useState<any[]>([]);
   const [addedUsers, setAddedUsers] = useState<any[]>([]);
   const [newUserEmail, setNewUserEmail] = useState("");
@@ -1274,7 +1370,7 @@ function Index() {
         <Card className="p-5 space-y-5 no-print h-fit lg:sticky lg:top-6">
           <Tabs value={mode} onValueChange={(v) => setMode(v as any)}>
             <TabsList
-              className={`grid w-full ${user?.email?.toLowerCase() === "admin@school.com" || user?.email?.toLowerCase() === "admin2026@school.com" ? "grid-cols-5" : "grid-cols-4"}`}
+              className={`grid w-full ${user?.email?.toLowerCase() === "admin@school.com" || user?.email?.toLowerCase() === "admin2026@school.com" ? "grid-cols-6" : "grid-cols-5"}`}
             >
               <TabsTrigger value="exam">
                 <GraduationCap className="mr-2 h-4 w-4" /> Exam
@@ -1288,6 +1384,9 @@ function Index() {
               <TabsTrigger value="resume">
                 <FileText className="mr-2 h-4 w-4" /> Resume / Bio
               </TabsTrigger>
+              <TabsTrigger value="saved">
+                <FolderOpen className="mr-2 h-4 w-4" /> Saved Templates
+              </TabsTrigger>
               {(user?.email?.toLowerCase() === "admin@school.com" ||
                 user?.email?.toLowerCase() === "admin2026@school.com") && (
                 <TabsTrigger value="admin">
@@ -1296,7 +1395,7 @@ function Index() {
               )}
             </TabsList>
 
-            {mode !== "timetable" && mode !== "resume" && mode !== "admin" && (
+            {mode !== "timetable" && mode !== "resume" && mode !== "admin" && mode !== "saved" && (
               <div className="mt-4 rounded-lg border bg-accent/30 p-2.5 space-y-1.5">
                 <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                   <span>Generation Engine</span>
@@ -1338,7 +1437,7 @@ function Index() {
             )}
 
             {/* Common header */}
-            {mode !== "timetable" && mode !== "resume" && mode !== "admin" && (
+            {mode !== "timetable" && mode !== "resume" && mode !== "admin" && mode !== "saved" && (
               <div className="space-y-3 mt-4">
                 <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                   School
@@ -2766,13 +2865,16 @@ function Index() {
 
         <div ref={outputRef}>
           {/* ── Prominent export bar shown right after generation ── */}
-          {hasOutput && mode !== "timetable" && (
+          {hasOutput && mode !== "timetable" && mode !== "saved" && (
             <div className="no-print sticky top-0 z-10 mb-4 flex gap-2 rounded-xl border bg-card/95 backdrop-blur p-3 shadow-lg">
               <span className="flex-1 text-sm font-semibold text-foreground self-center">
                 {mode === "resume"
                   ? "✅ Live Preview. Export or print your document:"
-                  : "✅ Generated! Download your document:"}
+                  : "✅ Generated! Export your document:"}
               </span>
+              <Button size="sm" variant="outline" className="border-primary/30 bg-primary/5 text-primary hover:bg-primary/10" onClick={() => setShowSaveDialog(true)}>
+                <Save className="mr-1.5 h-4 w-4" /> Save to Database
+              </Button>
               <Button
                 size="sm"
                 onClick={() => {
@@ -3432,6 +3534,68 @@ function Index() {
                 />
               )}
             </div>
+          ) : mode === "saved" ? (
+            <div className="space-y-4 no-print">
+              <Card className="p-6">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 gap-4">
+                  <div>
+                    <h3 className="text-lg font-bold tracking-tight text-foreground flex items-center gap-2">
+                      <FolderOpen className="h-5 w-5 text-primary" />
+                      My Saved Templates
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Load or delete your previously saved CKEditor templates.
+                    </p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={fetchSavedTemplates}
+                    disabled={savedTemplatesLoading}
+                  >
+                    Refresh
+                  </Button>
+                </div>
+                
+                <div className="mt-4 space-y-4">
+                  {savedTemplatesLoading && savedTemplates.length === 0 ? (
+                    <div className="flex justify-center py-12">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                  ) : savedTemplates.length === 0 ? (
+                    <div className="text-center py-12 text-muted-foreground">
+                      No saved templates found. Use the "Save to Database" button after generating a document.
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {savedTemplates.map((tpl: any) => (
+                        <Card key={tpl.id} className="p-4 flex flex-col justify-between space-y-3">
+                          <div>
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-[10px] font-semibold bg-primary/10 text-primary px-2 py-0.5 rounded uppercase">
+                                {tpl.mode}
+                              </span>
+                              <span className="text-[10px] text-muted-foreground">
+                                {new Date(tpl.createdAt).toLocaleDateString()}
+                              </span>
+                            </div>
+                            <h4 className="font-semibold text-sm line-clamp-2">{tpl.title}</h4>
+                          </div>
+                          <div className="flex gap-2 mt-2">
+                            <Button size="sm" className="flex-1" onClick={() => handleLoadTemplate(tpl)}>
+                              Load & Edit
+                            </Button>
+                            <Button size="sm" variant="outline" className="text-destructive hover:bg-destructive/10" onClick={() => handleDeleteTemplate(tpl.id)}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </Card>
+            </div>
           ) : mode === "admin" ? (
             <div className="space-y-4 no-print">
               <Card className="p-6">
@@ -3528,6 +3692,35 @@ function Index() {
           )}
         </div>
       </main>
+
+      {/* Save Template Dialog */}
+      <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Save Template to Database</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Template Name</Label>
+              <Input
+                placeholder="e.g. Midterm English Exam"
+                value={saveTemplateTitle}
+                onChange={(e) => setSaveTemplateTitle(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSaveTemplate();
+                }}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowSaveDialog(false)}>Cancel</Button>
+            <Button onClick={handleSaveTemplate} disabled={isSavingTemplate}>
+              {isSavingTemplate && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Save Template
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

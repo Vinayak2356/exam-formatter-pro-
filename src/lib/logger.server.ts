@@ -13,6 +13,15 @@ export type LogEntry = {
   details: string;
 };
 
+export type SavedTemplate = {
+  id: string;
+  userEmail: string;
+  title: string;
+  mode: string;
+  content: string;
+  createdAt: string;
+};
+
 export type UserEntry = {
   email: string;
   createdAt: string;
@@ -61,6 +70,16 @@ export async function ensureTablesExist() {
     await db.query(`
       CREATE TABLE IF NOT EXISTS registered_users (
         email TEXT PRIMARY KEY,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `);
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS saved_templates (
+        id TEXT PRIMARY KEY,
+        user_email TEXT NOT NULL,
+        title TEXT NOT NULL,
+        mode TEXT NOT NULL,
+        content TEXT NOT NULL,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
     `);
@@ -236,4 +255,57 @@ export async function addAddedUser(email: string): Promise<UserEntry> {
   users.unshift(entry);
   await fs.writeFile(USERS_FILE, JSON.stringify(users, null, 2), "utf-8");
   return entry;
+}
+
+export async function saveTemplate(
+  userEmail: string,
+  title: string,
+  mode: string,
+  content: string
+): Promise<SavedTemplate> {
+  const id = Math.random().toString(36).substring(2, 11);
+  const createdAt = new Date().toISOString();
+  const db = getPool();
+  if (db) {
+    await ensureTablesExist();
+    await db.query(
+      "INSERT INTO saved_templates (id, user_email, title, mode, content, created_at) VALUES ($1, $2, $3, $4, $5, $6)",
+      [id, userEmail, title, mode, content, createdAt]
+    );
+  } else {
+    throw new Error("Database required for saving templates");
+  }
+  return { id, userEmail, title, mode, content, createdAt };
+}
+
+export async function getUserTemplates(userEmail: string): Promise<SavedTemplate[]> {
+  const db = getPool();
+  if (db) {
+    await ensureTablesExist();
+    const res = await db.query(
+      `SELECT id, user_email as "userEmail", title, mode, content, created_at as "createdAt" 
+       FROM saved_templates 
+       WHERE LOWER(user_email) = LOWER($1) 
+       ORDER BY created_at DESC`,
+      [userEmail]
+    );
+    return res.rows.map((row) => ({
+      ...row,
+      createdAt: new Date(row.createdAt).toISOString(),
+    })) as SavedTemplate[];
+  }
+  return [];
+}
+
+export async function deleteTemplate(userEmail: string, id: string): Promise<void> {
+  const db = getPool();
+  if (db) {
+    await ensureTablesExist();
+    await db.query(
+      "DELETE FROM saved_templates WHERE id = $1 AND LOWER(user_email) = LOWER($2)",
+      [id, userEmail]
+    );
+  } else {
+    throw new Error("Database required for deleting templates");
+  }
 }

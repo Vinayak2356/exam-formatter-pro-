@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SwaggerRouteImport } from './routes/swagger'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiUserTemplatesRouteImport } from './routes/api/user/templates'
 import { Route as ApiPublicGenerateHhwRouteImport } from './routes/api/public/generate-hhw'
 import { Route as ApiPublicGenerateExamRouteImport } from './routes/api/public/generate-exam'
 import { Route as ApiPublicExportDocxRouteImport } from './routes/api/public/export-docx'
@@ -27,6 +28,11 @@ const SwaggerRoute = SwaggerRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiUserTemplatesRoute = ApiUserTemplatesRouteImport.update({
+  id: '/api/user/templates',
+  path: '/api/user/templates',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicGenerateHhwRoute = ApiPublicGenerateHhwRouteImport.update({
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/api/public/export-docx': typeof ApiPublicExportDocxRoute
   '/api/public/generate-exam': typeof ApiPublicGenerateExamRoute
   '/api/public/generate-hhw': typeof ApiPublicGenerateHhwRoute
+  '/api/user/templates': typeof ApiUserTemplatesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByTo {
   '/api/public/export-docx': typeof ApiPublicExportDocxRoute
   '/api/public/generate-exam': typeof ApiPublicGenerateExamRoute
   '/api/public/generate-hhw': typeof ApiPublicGenerateHhwRoute
+  '/api/user/templates': typeof ApiUserTemplatesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,6 +106,7 @@ export interface FileRoutesById {
   '/api/public/export-docx': typeof ApiPublicExportDocxRoute
   '/api/public/generate-exam': typeof ApiPublicGenerateExamRoute
   '/api/public/generate-hhw': typeof ApiPublicGenerateHhwRoute
+  '/api/user/templates': typeof ApiUserTemplatesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +120,7 @@ export interface FileRouteTypes {
     | '/api/public/export-docx'
     | '/api/public/generate-exam'
     | '/api/public/generate-hhw'
+    | '/api/user/templates'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +132,7 @@ export interface FileRouteTypes {
     | '/api/public/export-docx'
     | '/api/public/generate-exam'
     | '/api/public/generate-hhw'
+    | '/api/user/templates'
   id:
     | '__root__'
     | '/'
@@ -133,6 +144,7 @@ export interface FileRouteTypes {
     | '/api/public/export-docx'
     | '/api/public/generate-exam'
     | '/api/public/generate-hhw'
+    | '/api/user/templates'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -145,6 +157,7 @@ export interface RootRouteChildren {
   ApiPublicExportDocxRoute: typeof ApiPublicExportDocxRoute
   ApiPublicGenerateExamRoute: typeof ApiPublicGenerateExamRoute
   ApiPublicGenerateHhwRoute: typeof ApiPublicGenerateHhwRoute
+  ApiUserTemplatesRoute: typeof ApiUserTemplatesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -161,6 +174,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/user/templates': {
+      id: '/api/user/templates'
+      path: '/api/user/templates'
+      fullPath: '/api/user/templates'
+      preLoaderRoute: typeof ApiUserTemplatesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/generate-hhw': {
@@ -225,6 +245,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicExportDocxRoute: ApiPublicExportDocxRoute,
   ApiPublicGenerateExamRoute: ApiPublicGenerateExamRoute,
   ApiPublicGenerateHhwRoute: ApiPublicGenerateHhwRoute,
+  ApiUserTemplatesRoute: ApiUserTemplatesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
