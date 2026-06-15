@@ -1,3 +1,4 @@
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Layout } from './components/layout/Layout';
@@ -5,7 +6,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Explorer from './pages/Explorer';
 
-function ProtectedRoute({ children, requireAdmin = false }: { children: JSX.Element, requireAdmin?: boolean }) {
+function ProtectedRoute({ children, requireAdmin = false }: { children: React.ReactElement, requireAdmin?: boolean }) {
   const { isAuthenticated, role } = useAuth();
   
   if (!isAuthenticated) {
