@@ -2,9 +2,9 @@ spring:
   application:
     name: system-design-explorer
   datasource:
-    url: jdbc:mysql://localhost:3306/sdp_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    username: root
-    password: root
+    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/sdp_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${MYSQLUSER:root}
+    password: ${MYSQLPASSWORD:root}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
