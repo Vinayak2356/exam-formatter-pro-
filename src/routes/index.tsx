@@ -285,7 +285,7 @@ function Index() {
     const token = localStorage.getItem("auth_token");
     if (!token) return;
     setIsSavingTemplate(true);
-    
+
     let content = "";
     if (mode === "exam") content = customHtmlMap["exam"];
     else if (mode === "hhw") content = customHtmlMap["hhw"];
@@ -1280,9 +1280,9 @@ function Index() {
     grid: ttGrid,
     notes: ttNotes
       ? ttNotes
-          .split(/\n+/)
-          .map((s) => s.trim())
-          .filter(Boolean)
+        .split(/\n+/)
+        .map((s) => s.trim())
+        .filter(Boolean)
       : [],
   };
 
@@ -1389,10 +1389,10 @@ function Index() {
               </TabsTrigger>
               {(user?.email?.toLowerCase() === "admin@school.com" ||
                 user?.email?.toLowerCase() === "admin2026@school.com") && (
-                <TabsTrigger value="admin" className="flex-1 min-w-fit">
-                  <KeyRound className="mr-2 h-4 w-4" /> Admin
-                </TabsTrigger>
-              )}
+                  <TabsTrigger value="admin" className="flex-1 min-w-fit">
+                    <KeyRound className="mr-2 h-4 w-4" /> Admin
+                  </TabsTrigger>
+                )}
             </TabsList>
 
             {mode !== "timetable" && mode !== "resume" && mode !== "admin" && mode !== "saved" && (
@@ -1413,22 +1413,20 @@ function Index() {
                   <button
                     type="button"
                     onClick={() => setEngine("ai")}
-                    className={`rounded px-3 py-1.5 text-xs font-semibold transition flex items-center justify-center gap-1 ${
-                      engine === "ai"
-                        ? "bg-primary text-primary-foreground shadow-sm"
-                        : "hover:bg-accent text-muted-foreground bg-background/50"
-                    }`}
+                    className={`rounded px-3 py-1.5 text-xs font-semibold transition flex items-center justify-center gap-1 ${engine === "ai"
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "hover:bg-accent text-muted-foreground bg-background/50"
+                      }`}
                   >
                     🤖 AI (Gemini)
                   </button>
                   <button
                     type="button"
                     onClick={() => setEngine("offline")}
-                    className={`rounded px-3 py-1.5 text-xs font-semibold transition flex items-center justify-center gap-1 ${
-                      engine === "offline"
-                        ? "bg-primary text-primary-foreground shadow-sm"
-                        : "hover:bg-accent text-muted-foreground bg-background/50"
-                    }`}
+                    className={`rounded px-3 py-1.5 text-xs font-semibold transition flex items-center justify-center gap-1 ${engine === "offline"
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "hover:bg-accent text-muted-foreground bg-background/50"
+                      }`}
                   >
                     ⚡ Instant (Offline)
                   </button>
@@ -1570,11 +1568,10 @@ function Index() {
                       key={s}
                       type="button"
                       onClick={() => toggleHHWSubject(s)}
-                      className={`rounded-full border px-2.5 py-0.5 text-xs transition ${
-                        hhwSubjects.includes(s)
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "hover:bg-accent"
-                      }`}
+                      className={`rounded-full border px-2.5 py-0.5 text-xs transition ${hhwSubjects.includes(s)
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "hover:bg-accent"
+                        }`}
                     >
                       {s}
                     </button>
@@ -1809,22 +1806,20 @@ function Index() {
                     <button
                       type="button"
                       onClick={() => setResumeMode("job")}
-                      className={`rounded border px-2 py-2 text-xs font-semibold capitalize transition ${
-                        resumeMode === "job"
-                          ? "border-primary bg-primary text-primary-foreground shadow-sm"
-                          : "hover:bg-accent bg-background"
-                      }`}
+                      className={`rounded border px-2 py-2 text-xs font-semibold capitalize transition ${resumeMode === "job"
+                        ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                        : "hover:bg-accent bg-background"
+                        }`}
                     >
                       💼 Job Resume
                     </button>
                     <button
                       type="button"
                       onClick={() => setResumeMode("wedding")}
-                      className={`rounded border px-2 py-2 text-xs font-semibold capitalize transition ${
-                        resumeMode === "wedding"
-                          ? "border-primary bg-primary text-primary-foreground shadow-sm"
-                          : "hover:bg-accent bg-background"
-                      }`}
+                      className={`rounded border px-2 py-2 text-xs font-semibold capitalize transition ${resumeMode === "wedding"
+                        ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                        : "hover:bg-accent bg-background"
+                        }`}
                     >
                       ❤️ Matrimonial CV
                     </button>
@@ -2855,7 +2850,7 @@ function Index() {
 
           {hasOutput && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              
+
               <Button variant="outline" className="col-span-2" onClick={() => window.print()}>
                 <Printer className="mr-2 h-4 w-4" /> Print
               </Button>
@@ -2866,63 +2861,63 @@ function Index() {
         <div ref={outputRef}>
           {/* ── Prominent export bar shown right after generation ── */}
           {hasOutput && mode !== "timetable" && (
-            <div className="no-print sticky top-0 z-10 mb-4 flex flex-col sm:flex-row gap-2 sm:items-center rounded-xl border bg-card/95 backdrop-blur p-3 shadow-lg">
-              <span className="flex-1 text-xs sm:text-sm font-semibold text-foreground">
-                {mode === "resume"
-                  ? "✅ Live Preview. Export or print your document:"
-                  : "✅ Generated! Export your document:"}
-              </span>
-              <div className="flex gap-2 w-full sm:w-auto">
-                <Button size="sm" variant="outline" className="flex-1 sm:flex-none border-primary/30 bg-primary/5 text-primary hover:bg-primary/10" onClick={() => setShowSaveDialog(true)}>
-                  <Save className="mr-1.5 h-4 w-4" /> Save
-                </Button>
-              <Button
-                size="sm"
-                onClick={() => {
-                  if (mode === "exam") {
-                    if (examTemplate === "custom")
-                      return exportRawHtmlPdf(
-                        customHtmlMap["exam"],
-                        `${examHdr!.subject}-${examHdr!.className}-exam.pdf`,
-                      );
-                    return exportExamPdf(`${examHdr!.subject}-${examHdr!.className}-exam.pdf`);
-                  }
-                  if (mode === "hhw") {
-                    if (hhwTemplate === "custom")
-                      return exportRawHtmlPdf(
-                        customHtmlMap["hhw"],
-                        `${hhwHdr!.className}-holiday-homework.pdf`,
-                      );
-                    return exportHHWPdf(`${hhwHdr!.className}-holiday-homework.pdf`);
-                  }
+              <div className="no-print sticky top-0 z-10 mb-4 flex flex-col sm:flex-row gap-2 sm:items-center rounded-xl border bg-card/95 backdrop-blur p-3 shadow-lg">
+                <span className="flex-1 text-xs sm:text-sm font-semibold text-foreground">
+                  {mode === "resume"
+                    ? "✅ Live Preview. Export or print your document:"
+                    : "✅ Generated! Export your document:"}
+                </span>
+                <div className="flex gap-2 w-full sm:w-auto">
+                  <Button size="sm" variant="outline" className="flex-1 sm:flex-none border-primary/30 bg-primary/5 text-primary hover:bg-primary/10" onClick={() => setShowSaveDialog(true)}>
+                    <Save className="mr-1.5 h-4 w-4" /> Save
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      if (mode === "exam") {
+                        if (examTemplate === "custom")
+                          return exportRawHtmlPdf(
+                            customHtmlMap["exam"],
+                            `${examHdr!.subject}-${examHdr!.className}-exam.pdf`,
+                          );
+                        return exportExamPdf(`${examHdr!.subject}-${examHdr!.className}-exam.pdf`);
+                      }
+                      if (mode === "hhw") {
+                        if (hhwTemplate === "custom")
+                          return exportRawHtmlPdf(
+                            customHtmlMap["hhw"],
+                            `${hhwHdr!.className}-holiday-homework.pdf`,
+                          );
+                        return exportHHWPdf(`${hhwHdr!.className}-holiday-homework.pdf`);
+                      }
 
-                  const fname =
-                    resumeMode === "job"
-                      ? `${resumeData.name || "Resume"}_Resume.pdf`
-                      : `${biodataData.name || "Biodata"}_Biodata.pdf`;
-                  if (mode === "resume" && resumeMode === "job" && resumeTemplate === "custom") {
-                    return exportRawHtmlPdf(customHtmlMap["resume"], fname);
-                  }
-                  if (
-                    mode === "resume" &&
-                    resumeMode === "wedding" &&
-                    biodataTemplate === "custom"
-                  ) {
-                    return exportRawHtmlPdf(customHtmlMap["biodata"], fname);
-                  }
-                  return exportResumePdf(fname, resumeMode);
-                }}
-                className="flex-1 sm:flex-none shadow-md shadow-primary/20 hover:shadow-primary/30 transition-shadow bg-gradient-to-r from-primary to-primary/90 text-primary-foreground"
-              >
-                <Download className="mr-1.5 h-4 w-4" /> PDF
-              </Button>
-              
-              <Button size="sm" variant="ghost" onClick={() => window.print()}>
-                <Printer className="mr-1.5 h-4 w-4" /> Print
-              </Button>
-            </div>
-            </div>
-          )}
+                      const fname =
+                        resumeMode === "job"
+                          ? `${resumeData.name || "Resume"}_Resume.pdf`
+                          : `${biodataData.name || "Biodata"}_Biodata.pdf`;
+                      if (mode === "resume" && resumeMode === "job" && resumeTemplate === "custom") {
+                        return exportRawHtmlPdf(customHtmlMap["resume"], fname);
+                      }
+                      if (
+                        mode === "resume" &&
+                        resumeMode === "wedding" &&
+                        biodataTemplate === "custom"
+                      ) {
+                        return exportRawHtmlPdf(customHtmlMap["biodata"], fname);
+                      }
+                      return exportResumePdf(fname, resumeMode);
+                    }}
+                    className="flex-1 sm:flex-none shadow-md shadow-primary/20 hover:shadow-primary/30 transition-shadow bg-gradient-to-r from-primary to-primary/90 text-primary-foreground"
+                  >
+                    <Download className="mr-1.5 h-4 w-4" /> PDF
+                  </Button>
+
+                  <Button size="sm" variant="ghost" onClick={() => window.print()}>
+                    <Printer className="mr-1.5 h-4 w-4" /> Print
+                  </Button>
+                </div>
+              </div>
+            )}
 
           {mode === "exam" && paper && examHdr ? (
             <div className="space-y-4">
@@ -3503,7 +3498,7 @@ function Index() {
           ) : mode === "resume" ? (
             <div className="space-y-4">
               {(resumeMode === "job" && resumeTemplate === "custom") ||
-              (resumeMode === "wedding" && biodataTemplate === "custom") ? (
+                (resumeMode === "wedding" && biodataTemplate === "custom") ? (
                 <div className="border rounded-xl overflow-hidden bg-white shadow-lg min-h-[800px] flex flex-col">
                   <div className="bg-primary/10 p-3 border-b text-sm font-semibold text-primary flex items-center gap-2">
                     <Paintbrush className="h-4 w-4" />
@@ -3559,7 +3554,7 @@ function Index() {
                     Refresh
                   </Button>
                 </div>
-                
+
                 <div className="mt-4 space-y-4">
                   {savedTemplatesLoading && savedTemplates.length === 0 ? (
                     <div className="flex justify-center py-12">
@@ -3661,11 +3656,10 @@ function Index() {
                                 </td>
                                 <td className="p-3">
                                   <span
-                                    className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium border ${
-                                      log.action?.includes("exam")
-                                        ? "bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/30 dark:text-indigo-400 dark:border-indigo-800"
-                                        : "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800"
-                                    }`}
+                                    className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium border ${log.action?.includes("exam")
+                                      ? "bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/30 dark:text-indigo-400 dark:border-indigo-800"
+                                      : "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800"
+                                      }`}
                                   >
                                     {log.action}
                                   </span>
