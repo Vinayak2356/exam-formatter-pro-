@@ -1386,6 +1386,7 @@ function Index() {
                     </div>
                     <div className="border rounded-md overflow-hidden bg-white min-h-[300px]">
                       <CKEditor
+                        config={{ extraPlugins: "maximize" }}
                         editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
                         initData={customHtmlMap["exam"]}
                         onChange={(e: any) =>
@@ -1456,6 +1457,7 @@ function Index() {
                     </div>
                     <div className="border rounded-md overflow-hidden bg-white min-h-[300px]">
                       <CKEditor
+                        config={{ extraPlugins: "maximize" }}
                         editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
                         initData={customHtmlMap["hhw"]}
                         onChange={(e: any) =>
@@ -1592,6 +1594,7 @@ function Index() {
                     </div>
                     <div className="border rounded-md overflow-hidden bg-white min-h-[300px]">
                       <CKEditor
+                        config={{ extraPlugins: "maximize" }}
                         editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
                         initData={customHtmlMap["timetable"]}
                         onChange={(e: any) =>
@@ -1762,6 +1765,7 @@ function Index() {
                           </div>
                           <div className="border rounded-md overflow-hidden bg-white min-h-[300px]">
                             <CKEditor
+                              config={{ extraPlugins: "maximize" }}
                               editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
                               initData={customHtmlMap["resume"]}
                               onChange={(e: any) =>
@@ -2236,6 +2240,7 @@ function Index() {
                           </div>
                           <div className="border rounded-md overflow-hidden bg-white min-h-[300px]">
                             <CKEditor
+                              config={{ extraPlugins: "maximize" }}
                               editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
                               initData={customHtmlMap["biodata"]}
                               onChange={(e: any) =>
@@ -2652,6 +2657,7 @@ function Index() {
                 <Label>Source Text (chapter / syllabus / topics)</Label>
                 <div className="border rounded-md overflow-hidden bg-white">
                   <CKEditor
+                    config={{ extraPlugins: "maximize" }}
                     editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
                     initData={sourceText}
                     onChange={(e: any) => setSourceText(e.editor.getData())}
@@ -2670,6 +2676,7 @@ function Index() {
                 <Label>Extra Instructions (optional)</Label>
                 <div className="border rounded-md overflow-hidden bg-white">
                   <CKEditor
+                    config={{ extraPlugins: "maximize" }}
                     editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
                     initData={instructions}
                     onChange={(e: any) => setInstructions(e.editor.getData())}
@@ -2949,6 +2956,7 @@ function Index() {
                   </div>
                   <div className="flex-1">
                     <CKEditor
+                      config={{ extraPlugins: "maximize" }}
                       editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
                       initData={customHtmlMap["exam"]}
                       onChange={(e: any) =>
@@ -3263,6 +3271,7 @@ function Index() {
                   </div>
                   <div className="flex-1">
                     <CKEditor
+                      config={{ extraPlugins: "maximize" }}
                       editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
                       initData={customHtmlMap["hhw"]}
                       onChange={(e: any) =>
@@ -3454,6 +3463,7 @@ function Index() {
                   </div>
                   <div className="flex-1">
                     <CKEditor
+                      config={{ extraPlugins: "maximize" }}
                       editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
                       initData={customHtmlMap["timetable"]}
                       onChange={(e: any) =>
@@ -3532,6 +3542,7 @@ function Index() {
                   </div>
                   <div className="flex-1">
                     <CKEditor
+                      config={{ extraPlugins: "maximize" }}
                       editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
                       initData={
                         resumeMode === "job" ? customHtmlMap["resume"] : customHtmlMap["biodata"]
