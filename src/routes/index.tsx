@@ -2866,15 +2866,16 @@ function Index() {
         <div ref={outputRef}>
           {/* ── Prominent export bar shown right after generation ── */}
           {hasOutput && mode !== "timetable" && mode !== "saved" && (
-            <div className="no-print sticky top-0 z-10 mb-4 flex gap-2 rounded-xl border bg-card/95 backdrop-blur p-3 shadow-lg">
-              <span className="flex-1 text-sm font-semibold text-foreground self-center">
+            <div className="no-print sticky top-0 z-10 mb-4 flex flex-col sm:flex-row gap-2 sm:items-center rounded-xl border bg-card/95 backdrop-blur p-3 shadow-lg">
+              <span className="flex-1 text-xs sm:text-sm font-semibold text-foreground">
                 {mode === "resume"
                   ? "✅ Live Preview. Export or print your document:"
                   : "✅ Generated! Export your document:"}
               </span>
-              <Button size="sm" variant="outline" className="border-primary/30 bg-primary/5 text-primary hover:bg-primary/10" onClick={() => setShowSaveDialog(true)}>
-                <Save className="mr-1.5 h-4 w-4" /> Save to Database
-              </Button>
+              <div className="flex gap-2 w-full sm:w-auto">
+                <Button size="sm" variant="outline" className="flex-1 sm:flex-none border-primary/30 bg-primary/5 text-primary hover:bg-primary/10" onClick={() => setShowSaveDialog(true)}>
+                  <Save className="mr-1.5 h-4 w-4" /> Save
+                </Button>
               <Button
                 size="sm"
                 onClick={() => {
@@ -2911,6 +2912,7 @@ function Index() {
                   }
                   return exportResumePdf(fname, resumeMode);
                 }}
+                className="flex-1 sm:flex-none shadow-md shadow-primary/20 hover:shadow-primary/30 transition-shadow bg-gradient-to-r from-primary to-primary/90 text-primary-foreground"
               >
                 <Download className="mr-1.5 h-4 w-4" /> PDF
               </Button>
@@ -2918,6 +2920,7 @@ function Index() {
               <Button size="sm" variant="ghost" onClick={() => window.print()}>
                 <Printer className="mr-1.5 h-4 w-4" /> Print
               </Button>
+            </div>
             </div>
           )}
 
