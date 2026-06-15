@@ -3,7 +3,7 @@ import { join } from "path";
 
 const port = process.env.PORT || 3000;
 
-Bun.serve({
+const serverInstance = Bun.serve({
   hostname: "0.0.0.0",
   port: port,
   async fetch(request) {
@@ -22,4 +22,14 @@ Bun.serve({
   },
 });
 
-console.log(`Server running on http://localhost:${port}`);
+console.log(`Server running on http://${serverInstance.hostname}:${serverInstance.port}`);
+
+// Graceful shutdown to prevent 'npm error signal SIGTERM' on Railway deployments
+const gracefulShutdown = () => {
+  console.log("Received shutdown signal. Stopping server gracefully...");
+  serverInstance.stop(true);
+  process.exit(0);
+};
+
+process.on("SIGINT", gracefulShutdown);
+process.on("SIGTERM", gracefulShutdown);
