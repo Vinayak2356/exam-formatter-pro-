@@ -4,6 +4,7 @@ import { join } from "path";
 const port = process.env.PORT || 3000;
 
 Bun.serve({
+  hostname: "0.0.0.0",
   port: port,
   async fetch(request) {
     const url = new URL(request.url);
