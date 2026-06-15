@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CKEditor } from "ckeditor4-react";
+import { EditorModal } from "@/components/EditorModal";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -1385,13 +1386,10 @@ function Index() {
                       Build your entire exam layout from scratch using the rich text editor below.
                     </div>
                     <div className="border rounded-md overflow-hidden bg-white min-h-[300px]">
-                      <CKEditor
-                        config={{ extraPlugins: "maximize" }}
-                        editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
-                        initData={customHtmlMap["exam"]}
-                        onChange={(e: any) =>
-                          setCustomHtmlMap({ ...customHtmlMap, exam: e.editor.getData() })
-                        }
+                      <EditorModal
+                        value={customHtmlMap["exam"]}
+                        onChange={(val) => setCustomHtmlMap({ ...customHtmlMap, exam: val })}
+                        title="Open Rich Text Editor"
                       />
                     </div>
                   </div>
@@ -1456,13 +1454,10 @@ function Index() {
                       Build your holiday homework entirely from scratch.
                     </div>
                     <div className="border rounded-md overflow-hidden bg-white min-h-[300px]">
-                      <CKEditor
-                        config={{ extraPlugins: "maximize" }}
-                        editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
-                        initData={customHtmlMap["hhw"]}
-                        onChange={(e: any) =>
-                          setCustomHtmlMap({ ...customHtmlMap, hhw: e.editor.getData() })
-                        }
+                      <EditorModal
+                        value={customHtmlMap["hhw"]}
+                        onChange={(val) => setCustomHtmlMap({ ...customHtmlMap, hhw: val })}
+                        title="Open Rich Text Editor"
                       />
                     </div>
                   </div>
@@ -1593,13 +1588,10 @@ function Index() {
                       Build your timetable entirely from scratch.
                     </div>
                     <div className="border rounded-md overflow-hidden bg-white min-h-[300px]">
-                      <CKEditor
-                        config={{ extraPlugins: "maximize" }}
-                        editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
-                        initData={customHtmlMap["timetable"]}
-                        onChange={(e: any) =>
-                          setCustomHtmlMap({ ...customHtmlMap, timetable: e.editor.getData() })
-                        }
+                      <EditorModal
+                        value={customHtmlMap["timetable"]}
+                        onChange={(val) => setCustomHtmlMap({ ...customHtmlMap, timetable: val })}
+                        title="Open Rich Text Editor"
                       />
                     </div>
                   </div>
@@ -1764,13 +1756,12 @@ function Index() {
                             Build your resume entirely from scratch.
                           </div>
                           <div className="border rounded-md overflow-hidden bg-white min-h-[300px]">
-                            <CKEditor
-                              config={{ extraPlugins: "maximize" }}
-                              editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
-                              initData={customHtmlMap["resume"]}
-                              onChange={(e: any) =>
-                                setCustomHtmlMap({ ...customHtmlMap, resume: e.editor.getData() })
+                            <EditorModal
+                              value={customHtmlMap["resume"]}
+                              onChange={(val) =>
+                                setCustomHtmlMap({ ...customHtmlMap, resume: val })
                               }
+                              title="Open Rich Text Editor"
                             />
                           </div>
                         </div>
@@ -2239,13 +2230,12 @@ function Index() {
                             Build your bio data entirely from scratch.
                           </div>
                           <div className="border rounded-md overflow-hidden bg-white min-h-[300px]">
-                            <CKEditor
-                              config={{ extraPlugins: "maximize" }}
-                              editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
-                              initData={customHtmlMap["biodata"]}
-                              onChange={(e: any) =>
-                                setCustomHtmlMap({ ...customHtmlMap, biodata: e.editor.getData() })
+                            <EditorModal
+                              value={customHtmlMap["biodata"]}
+                              onChange={(val) =>
+                                setCustomHtmlMap({ ...customHtmlMap, biodata: val })
                               }
+                              title="Open Rich Text Editor"
                             />
                           </div>
                         </div>
@@ -2656,11 +2646,10 @@ function Index() {
               <div className="space-y-2">
                 <Label>Source Text (chapter / syllabus / topics)</Label>
                 <div className="border rounded-md overflow-hidden bg-white">
-                  <CKEditor
-                    config={{ extraPlugins: "maximize" }}
-                    editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
-                    initData={sourceText}
-                    onChange={(e: any) => setSourceText(e.editor.getData())}
+                  <EditorModal
+                    value={sourceText}
+                    onChange={(val) => setSourceText(val)}
+                    title="Open Rich Text Editor"
                   />
                 </div>
               </div>
@@ -2675,11 +2664,10 @@ function Index() {
               <div className="space-y-2">
                 <Label>Extra Instructions (optional)</Label>
                 <div className="border rounded-md overflow-hidden bg-white">
-                  <CKEditor
-                    config={{ extraPlugins: "maximize" }}
-                    editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
-                    initData={instructions}
-                    onChange={(e: any) => setInstructions(e.editor.getData())}
+                  <EditorModal
+                    value={instructions}
+                    onChange={(val) => setInstructions(val)}
+                    title="Open Rich Text Editor"
                   />
                 </div>
               </div>
@@ -2955,13 +2943,10 @@ function Index() {
                     Custom HTML Exam Editor
                   </div>
                   <div className="flex-1">
-                    <CKEditor
-                      config={{ extraPlugins: "maximize" }}
-                      editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
-                      initData={customHtmlMap["exam"]}
-                      onChange={(e: any) =>
-                        setCustomHtmlMap({ ...customHtmlMap, exam: e.editor.getData() })
-                      }
+                    <EditorModal
+                      value={customHtmlMap["exam"]}
+                      onChange={(val) => setCustomHtmlMap({ ...customHtmlMap, exam: val })}
+                      title="Open Rich Text Editor"
                     />
                   </div>
                 </div>
@@ -3270,13 +3255,10 @@ function Index() {
                     Custom HTML Holiday Homework Editor
                   </div>
                   <div className="flex-1">
-                    <CKEditor
-                      config={{ extraPlugins: "maximize" }}
-                      editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
-                      initData={customHtmlMap["hhw"]}
-                      onChange={(e: any) =>
-                        setCustomHtmlMap({ ...customHtmlMap, hhw: e.editor.getData() })
-                      }
+                    <EditorModal
+                      value={customHtmlMap["hhw"]}
+                      onChange={(val) => setCustomHtmlMap({ ...customHtmlMap, hhw: val })}
+                      title="Open Rich Text Editor"
                     />
                   </div>
                 </div>
@@ -3462,13 +3444,10 @@ function Index() {
                     Custom HTML Timetable Editor
                   </div>
                   <div className="flex-1">
-                    <CKEditor
-                      config={{ extraPlugins: "maximize" }}
-                      editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
-                      initData={customHtmlMap["timetable"]}
-                      onChange={(e: any) =>
-                        setCustomHtmlMap({ ...customHtmlMap, timetable: e.editor.getData() })
-                      }
+                    <EditorModal
+                      value={customHtmlMap["timetable"]}
+                      onChange={(val) => setCustomHtmlMap({ ...customHtmlMap, timetable: val })}
+                      title="Open Rich Text Editor"
                     />
                   </div>
                 </div>
@@ -3541,18 +3520,17 @@ function Index() {
                     Custom HTML {resumeMode === "job" ? "Resume" : "Biodata"} Editor
                   </div>
                   <div className="flex-1">
-                    <CKEditor
-                      config={{ extraPlugins: "maximize" }}
-                      editorUrl="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js"
-                      initData={
+                    <EditorModal
+                      value={
                         resumeMode === "job" ? customHtmlMap["resume"] : customHtmlMap["biodata"]
                       }
-                      onChange={(e: any) =>
+                      onChange={(val) =>
                         setCustomHtmlMap({
                           ...customHtmlMap,
-                          [resumeMode === "job" ? "resume" : "biodata"]: e.editor.getData(),
+                          [resumeMode === "job" ? "resume" : "biodata"]: val,
                         })
                       }
+                      title="Open Rich Text Editor"
                     />
                   </div>
                 </div>
