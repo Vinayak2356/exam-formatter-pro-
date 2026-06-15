@@ -1370,26 +1370,26 @@ function Index() {
         <Card className="p-5 space-y-5 no-print h-fit lg:sticky lg:top-6">
           <Tabs value={mode} onValueChange={(v) => setMode(v as any)}>
             <TabsList
-              className={`grid w-full ${user?.email?.toLowerCase() === "admin@school.com" || user?.email?.toLowerCase() === "admin2026@school.com" ? "grid-cols-6" : "grid-cols-5"}`}
+              className="flex flex-wrap w-full h-auto"
             >
-              <TabsTrigger value="exam">
+              <TabsTrigger value="exam" className="flex-1 min-w-fit">
                 <GraduationCap className="mr-2 h-4 w-4" /> Exam
               </TabsTrigger>
-              <TabsTrigger value="hhw">
+              <TabsTrigger value="hhw" className="flex-1 min-w-fit">
                 <Sparkles className="mr-2 h-4 w-4" /> HHW
               </TabsTrigger>
-              <TabsTrigger value="timetable">
+              <TabsTrigger value="timetable" className="flex-1 min-w-fit">
                 <CalendarClock className="mr-2 h-4 w-4" /> Timetable
               </TabsTrigger>
-              <TabsTrigger value="resume">
-                <FileText className="mr-2 h-4 w-4" /> Resume / Bio
+              <TabsTrigger value="resume" className="flex-1 min-w-fit">
+                <FileText className="mr-2 h-4 w-4" /> Resume
               </TabsTrigger>
-              <TabsTrigger value="saved">
-                <FolderOpen className="mr-2 h-4 w-4" /> Saved Templates
+              <TabsTrigger value="saved" className="flex-1 min-w-fit">
+                <FolderOpen className="mr-2 h-4 w-4" /> Saved
               </TabsTrigger>
               {(user?.email?.toLowerCase() === "admin@school.com" ||
                 user?.email?.toLowerCase() === "admin2026@school.com") && (
-                <TabsTrigger value="admin">
+                <TabsTrigger value="admin" className="flex-1 min-w-fit">
                   <KeyRound className="mr-2 h-4 w-4" /> Admin
                 </TabsTrigger>
               )}
