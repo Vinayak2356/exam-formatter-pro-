@@ -1409,7 +1409,7 @@ function Index() {
                     </span>
                   )}
                 </div>
-                <div className="grid grid-cols-2 gap-1.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                   <button
                     type="button"
                     onClick={() => setEngine("ai")}
@@ -1499,7 +1499,7 @@ function Index() {
                 <Label>Exam Title</Label>
                 <Input value={examTitle} onChange={(e) => setExamTitle(e.target.value)} />
               </div>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 <div className="space-y-2">
                   <Label>Time</Label>
                   <Input value={time} onChange={(e) => setTime(e.target.value)} />
@@ -1788,7 +1788,7 @@ function Index() {
                 <Textarea rows={2} value={ttNotes} onChange={(e) => setTtNotes(e.target.value)} />
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <Button type="button" variant="outline" size="sm" onClick={fillFirstRowToAll}>
                   Copy row 1 → all
                 </Button>
@@ -1805,7 +1805,7 @@ function Index() {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label>Document Type</Label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <button
                       type="button"
                       onClick={() => setResumeMode("job")}
@@ -1884,7 +1884,7 @@ function Index() {
                         placeholder="Senior Software Engineer"
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       <div className="space-y-2">
                         <Label>Email</Label>
                         <Input
@@ -1903,7 +1903,7 @@ function Index() {
                         />
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       <div className="space-y-2">
                         <Label>Location</Label>
                         <Input
@@ -2038,7 +2038,7 @@ function Index() {
                                 setResumeData({ ...resumeData, education: list });
                               }}
                             />
-                            <div className="grid grid-cols-2 gap-1">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                               <Input
                                 className="h-7 text-xs"
                                 placeholder="Degree"
@@ -2060,7 +2060,7 @@ function Index() {
                                 }}
                               />
                             </div>
-                            <div className="grid grid-cols-3 gap-1">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-1">
                               <Input
                                 className="h-7 text-xs"
                                 placeholder="Start Year"
@@ -2151,7 +2151,7 @@ function Index() {
                                 <Trash2 className="h-3 w-3" />
                               </Button>
                             </div>
-                            <div className="grid grid-cols-2 gap-1">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                               <Input
                                 className="h-7 text-xs"
                                 placeholder="Company"
@@ -2173,7 +2173,7 @@ function Index() {
                                 }}
                               />
                             </div>
-                            <div className="grid grid-cols-3 gap-1">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-1">
                               <Input
                                 className="h-7 text-xs col-span-1"
                                 placeholder="Location"
@@ -2267,7 +2267,7 @@ function Index() {
                                 <Trash2 className="h-3 w-3" />
                               </Button>
                             </div>
-                            <div className="grid grid-cols-2 gap-1">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                               <Input
                                 className="h-7 text-xs"
                                 placeholder="Project Title"
@@ -2349,7 +2349,7 @@ function Index() {
                         onChange={(e) => setBiodataData({ ...biodataData, name: e.target.value })}
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       <div className="space-y-2">
                         <Label>Date of Birth</Label>
                         <Input
@@ -2367,7 +2367,7 @@ function Index() {
                         />
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       <div className="space-y-2">
                         <Label>Place of Birth</Label>
                         <Input
@@ -2387,7 +2387,7 @@ function Index() {
                         />
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       <div className="space-y-2">
                         <Label>Complexion</Label>
                         <Input
@@ -2408,7 +2408,7 @@ function Index() {
                         />
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       <div className="space-y-2">
                         <Label>Rashi</Label>
                         <Input
@@ -2428,7 +2428,7 @@ function Index() {
                         />
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       <div className="space-y-2">
                         <Label>Religion</Label>
                         <Input
@@ -2472,7 +2472,7 @@ function Index() {
                           }
                         />
                       </div>
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div className="space-y-2">
                           <Label>Company Name</Label>
                           <Input
@@ -2499,7 +2499,7 @@ function Index() {
                       <h3 className="text-xs font-bold text-muted-foreground uppercase">
                         Family Details
                       </h3>
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div className="space-y-2">
                           <Label>Father's Name</Label>
                           <Input
@@ -2519,7 +2519,7 @@ function Index() {
                           />
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div className="space-y-2">
                           <Label>Mother's Name</Label>
                           <Input
@@ -2549,7 +2549,7 @@ function Index() {
                           placeholder="e.g. 1 younger sister"
                         />
                       </div>
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div className="space-y-2">
                           <Label>Family Status</Label>
                           <Input
@@ -2812,7 +2812,7 @@ function Index() {
                   <p className="text-xs text-muted-foreground">PNG / JPG, up to 2MB.</p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div className="space-y-2">
                   <Label>Accent Color</Label>
                   <div className="flex items-center gap-2">
@@ -2854,7 +2854,7 @@ function Index() {
           )}
 
           {hasOutput && (
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               
               <Button variant="outline" className="col-span-2" onClick={() => window.print()}>
                 <Printer className="mr-2 h-4 w-4" /> Print
@@ -2962,7 +2962,7 @@ function Index() {
                 </div>
 
                 {/* Header details editor */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 bg-accent/30 p-3 rounded-lg text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 bg-accent/30 p-3 rounded-lg text-xs">
                   <div className="space-y-1">
                     <Label className="text-[10px]">School Name</Label>
                     <Input
@@ -3275,7 +3275,7 @@ function Index() {
                 </div>
 
                 {/* Header details editor */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 bg-accent/30 p-3 rounded-lg text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 bg-accent/30 p-3 rounded-lg text-xs">
                   <div className="space-y-1">
                     <Label className="text-[10px]">School Name</Label>
                     <Input
