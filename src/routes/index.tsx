@@ -2865,7 +2865,7 @@ function Index() {
 
         <div ref={outputRef}>
           {/* ── Prominent export bar shown right after generation ── */}
-          {hasOutput && mode !== "timetable" && mode !== "saved" && (
+          {hasOutput && mode !== "timetable" && (
             <div className="no-print sticky top-0 z-10 mb-4 flex flex-col sm:flex-row gap-2 sm:items-center rounded-xl border bg-card/95 backdrop-blur p-3 shadow-lg">
               <span className="flex-1 text-xs sm:text-sm font-semibold text-foreground">
                 {mode === "resume"
