@@ -1,0 +1,51 @@
+# 🌟 Exam Formatter Pro & System Design Patterns Explorer
+
+Welcome to the central codebase documentation. This workspace contains two primary projects:
+1. **Exam Formatter Pro**: A TanStack Start (React 19 + Vite 7) application to generate school exam papers, timetables, and holiday homework.
+2. **System Design Patterns Explorer (SDP Explorer)**: A full-stack Spring Boot (Java 17) + React SPA application using MySQL to catalog and manage 30+ distributed systems design patterns.
+
+---
+
+## 🔗 Deployed Application Links & Routes
+
+### 1. System Design Patterns Explorer
+* **Base Production URL**: https://sdp-explorer-production.up.railway.app
+* **Frontend SPA Pages**:
+  * **Dashboard**: https://sdp-explorer-production.up.railway.app/
+  * **Pattern Library**: https://sdp-explorer-production.up.railway.app/explorer
+  * **Admin Panel**: https://sdp-explorer-production.up.railway.app/admin (Restricted to Role: ADMIN)
+  * **Login Page**: https://sdp-explorer-production.up.railway.app/login
+* **Swagger API Documentation**: https://sdp-explorer-production.up.railway.app/swagger-ui.html
+
+### 2. Exam Formatter Pro
+* **Base Production URL**: https://exam-formatter-pro-production.up.railway.app
+
+---
+
+## 🛠️ Swagger OpenAPI Specifications (Backend Endpoints)
+
+The Spring Boot backend exposes several API endpoints documented at /swagger-ui.html. Below is the detailed resource structure:
+
+- **POST /api/auth/login**: Authenticates users and returns a JWT bearer token.
+- **GET /api/patterns**: Returns a list of all distributed system design patterns (Public).
+- **GET /api/patterns/{id}**: Fetches detailed information for a single design pattern (Public).
+- **POST /api/patterns**: Inserts a new design pattern (Admin only).
+- **PUT /api/patterns/{id}**: Modifies properties of an existing pattern by ID (Admin only).
+- **DELETE /api/patterns/{id}**: Removes a design pattern from the repository (Admin only).
+- **GET /api/stats**: Retrieves aggregate counts of patterns, categories, and logs (Public).
+
+---
+
+## 📂 Project Directory Structure
+
+- **src/**: Exam Formatter Pro (React 19) components for exam paper views, holiday homework templates, and timetable grids.
+- **system-design-explorer/**: SDP Explorer (Spring Boot + React) containing the backend security configurations, seeder loader, Axios API client, and pages (Dashboard, Explorer, and Admin).
+
+---
+
+## 💻 Code & Core Architecture Overview
+
+- **SPA Client-Side Routing Fix**: whitelisted '/login', '/explorer', and '/admin' routes in SecurityConfig.java so browser direct reloads do not trigger 403 Forbidden.
+- **Auto-Seeding Database**: DataSeeder.java automatically loads 30 design patterns and creating default admin account on start.
+- **Axios Interceptor**: api.ts adds Bearer JWT tokens to all requests automatically.
+- **Tailwind CSS v4 Configuration**: Configured @tailwindcss/vite compiler in vite.config.ts and import themes in index.css.
