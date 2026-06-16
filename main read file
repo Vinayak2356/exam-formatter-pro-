@@ -1,51 +1,648 @@
-# 🌟 Exam Formatter Pro & System Design Patterns Explorer
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Documentation & Architecture Guide</title>
+  <!-- Inter font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card: #111827;
+      --card-border: #1f2937;
+      --text: #9ca3af;
+      --text-header: #f9fafb;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --primary-glow: rgba(59, 130, 246, 0.15);
+      --accent: #10b981;
+      --accent-glow: rgba(16, 185, 129, 0.15);
+      --code-bg: #1f2937;
+      --sidebar-width: 280px;
+    }
 
-Welcome to the central codebase documentation. This workspace contains two primary projects:
-1. **Exam Formatter Pro**: A TanStack Start (React 19 + Vite 7) application to generate school exam papers, timetables, and holiday homework.
-2. **System Design Patterns Explorer (SDP Explorer)**: A full-stack Spring Boot (Java 17) + React SPA application using MySQL to catalog and manage 30+ distributed systems design patterns.
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
----
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-## 🔗 Deployed Application Links & Routes
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--card-border);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #374151;
+    }
 
-### 1. System Design Patterns Explorer
-* **Base Production URL**: https://sdp-explorer-production.up.railway.app
-* **Frontend SPA Pages**:
-  * **Dashboard**: https://sdp-explorer-production.up.railway.app/
-  * **Pattern Library**: https://sdp-explorer-production.up.railway.app/explorer
-  * **Admin Panel**: https://sdp-explorer-production.up.railway.app/admin (Restricted to Role: ADMIN)
-  * **Login Page**: https://sdp-explorer-production.up.railway.app/login
-* **Swagger API Documentation**: https://sdp-explorer-production.up.railway.app/swagger-ui.html
+    /* Sidebar Navigation */
+    aside {
+      width: var(--sidebar-width);
+      background: var(--card);
+      border-right: 1px solid var(--card-border);
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      z-index: 10;
+      overflow-y: auto;
+    }
 
-### 2. Exam Formatter Pro
-* **Base Production URL**: https://exam-formatter-pro-production.up.railway.app
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
 
----
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #fff;
+      font-size: 1.1rem;
+    }
 
-## 🛠️ Swagger OpenAPI Specifications (Backend Endpoints)
+    .brand-name {
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--text-header);
+      letter-spacing: -0.025em;
+    }
 
-The Spring Boot backend exposes several API endpoints documented at /swagger-ui.html. Below is the detailed resource structure:
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
 
-- **POST /api/auth/login**: Authenticates users and returns a JWT bearer token.
-- **GET /api/patterns**: Returns a list of all distributed system design patterns (Public).
-- **GET /api/patterns/{id}**: Fetches detailed information for a single design pattern (Public).
-- **POST /api/patterns**: Inserts a new design pattern (Admin only).
-- **PUT /api/patterns/{id}**: Modifies properties of an existing pattern by ID (Admin only).
-- **DELETE /api/patterns/{id}**: Removes a design pattern from the repository (Admin only).
-- **GET /api/stats**: Retrieves aggregate counts of patterns, categories, and logs (Public).
+    .nav-item a {
+      display: block;
+      padding: 0.75rem 1rem;
+      color: var(--text);
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
 
----
+    .nav-item a:hover {
+      color: var(--text-header);
+      background: rgba(255, 255, 255, 0.03);
+    }
 
-## 📂 Project Directory Structure
+    .nav-item.active a {
+      color: var(--primary);
+      background: var(--primary-glow);
+      font-weight: 600;
+    }
 
-- **src/**: Exam Formatter Pro (React 19) components for exam paper views, holiday homework templates, and timetable grids.
-- **system-design-explorer/**: SDP Explorer (Spring Boot + React) containing the backend security configurations, seeder loader, Axios API client, and pages (Dashboard, Explorer, and Admin).
+    /* Main Content */
+    main {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      padding: 3rem 4rem;
+      max-width: 1200px;
+    }
 
----
+    header {
+      margin-bottom: 3rem;
+      position: relative;
+    }
 
-## 💻 Code & Core Architecture Overview
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: -1.5rem;
+      left: 0;
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 2px;
+    }
 
-- **SPA Client-Side Routing Fix**: whitelisted '/login', '/explorer', and '/admin' routes in SecurityConfig.java so browser direct reloads do not trigger 403 Forbidden.
-- **Auto-Seeding Database**: DataSeeder.java automatically loads 30 design patterns and creating default admin account on start.
-- **Axios Interceptor**: api.ts adds Bearer JWT tokens to all requests automatically.
-- **Tailwind CSS v4 Configuration**: Configured @tailwindcss/vite compiler in vite.config.ts and import themes in index.css.
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--text-header);
+      letter-spacing: -0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-header);
+      letter-spacing: -0.03em;
+      margin-top: 3.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-header);
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    /* Links & Buttons */
+    .link-group {
+      display: grid;
+      grid-template-cols: 1fr;
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    @media (min-width: 768px) {
+      .link-group {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .link-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      transition: all 0.2s;
+    }
+
+    .link-card:hover {
+      border-color: #374151;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    .link-title {
+      font-weight: 700;
+      color: var(--text-header);
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .link-url {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--primary);
+      text-decoration: none;
+      word-break: break-all;
+    }
+
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.6rem 1.2rem;
+      background: var(--primary);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: background 0.2s;
+      align-self: flex-start;
+    }
+
+    .btn-action:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-accent {
+      background: var(--accent);
+    }
+    .btn-accent:hover {
+      background: #059669;
+    }
+
+    /* Grid & Cards */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (min-width: 768px) {
+      .grid-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--primary);
+    }
+
+    .feature-card.accent::before {
+      background: var(--accent);
+    }
+
+    /* Table formatting */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 1rem 1.25rem;
+      text-align: left;
+    }
+
+    th {
+      background: #1f2937;
+      color: var(--text-header);
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    td {
+      border-bottom: 1px solid var(--card-border);
+      font-size: 0.95rem;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid transparent;
+    }
+
+    .badge-primary {
+      background: var(--primary-glow);
+      color: var(--primary);
+      border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    .badge-accent {
+      background: var(--accent-glow);
+      color: var(--accent);
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    /* Code blocks */
+    pre, code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    pre {
+      background: #111827;
+      border: 1px solid var(--card-border);
+      padding: 1.5rem;
+      border-radius: 12px;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+
+    code {
+      font-size: 0.9rem;
+      color: #38bdf8;
+    }
+
+    .inline-code {
+      background: var(--code-bg);
+      padding: 0.2rem 0.4rem;
+      border-radius: 6px;
+      color: #f43f5e;
+      font-size: 0.85rem;
+    }
+
+    /* Mobile Toggle */
+    .mobile-nav-toggle {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      aside {
+        transform: translateX(-100%);
+        transition: transform 0.3s;
+      }
+
+      aside.open {
+        transform: translateX(0);
+      }
+
+      main {
+        margin-left: 0;
+        padding: 2rem 1.5rem;
+      }
+
+      .mobile-nav-toggle {
+        display: block;
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 56px;
+        height: 56px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+        z-index: 100;
+        font-weight: 800;
+        cursor: pointer;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <button class="mobile-nav-toggle" onclick="document.querySelector('aside').classList.toggle('open')">☰</button>
+
+  <!-- Sidebar -->
+  <aside>
+    <div class="brand">
+      <div class="brand-logo">📚</div>
+      <div class="brand-name">Workspace Docs</div>
+    </div>
+    <ul class="nav-list">
+      <li class="nav-item"><a href="#overview">Overview</a></li>
+      <li class="nav-item"><a href="#links">Deployed URL Directory</a></li>
+      <li class="nav-item"><a href="#swagger">Swagger API Specs</a></li>
+      <li class="nav-item"><a href="#directory">Workspace Directory Map</a></li>
+      <li class="nav-item"><a href="#architecture">Core Architecture Details</a></li>
+      <li class="nav-item"><a href="#ui-design">Visual Guidelines</a></li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <main>
+    <header>
+      <h1>Project Documentation & Guide</h1>
+      <p>A central developer overview of the workspaces inside this repository.</p>
+    </header>
+
+    <!-- Overview -->
+    <section id="overview">
+      <h2>1. Overview</h2>
+      <p>This workspace serves as a repository combining two primary applications:</p>
+      
+      <div class="grid-2">
+        <div class="feature-card">
+          <h3>Exam Formatter Pro</h3>
+          <p>A React 19 / Vite 7 application designed to design, generate, and format school exam papers, timetables, and holiday homework. Supports CBSE header styling and premium landscape schedules.</p>
+        </div>
+        <div class="feature-card accent">
+          <h3>System Design Patterns Explorer</h3>
+          <p>A full-stack project built with Spring Boot, JPA, MySQL, and a React SPA. Seeds and hosts a database cataloguing 30+ distributed systems patterns with administrative CRUD panels.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Links -->
+    <section id="links">
+      <h2>2. Deployed URL Directory</h2>
+      <p>Use the following links to interact with the live instances deployed on Railway:</p>
+      
+      <div class="link-group">
+        <div class="link-card">
+          <div class="link-title"><span>🌐</span> System Design Patterns Explorer</div>
+          <p>Fully secure full-stack patterns repository dashboard.</p>
+          <a class="link-url" href="https://sdp-explorer-production.up.railway.app" target="_blank">https://sdp-explorer-production.up.railway.app</a>
+          <a class="btn-action" href="https://sdp-explorer-production.up.railway.app" target="_blank">Launch Application</a>
+        </div>
+        
+        <div class="link-card">
+          <div class="link-title"><span>📄</span> Swagger API Documentation</div>
+          <p>OpenAPI interactive REST specifications endpoints.</p>
+          <a class="link-url" href="https://sdp-explorer-production.up.railway.app/swagger-ui.html" target="_blank">https://sdp-explorer-production.up.railway.app/swagger-ui.html</a>
+          <a class="btn-action btn-accent" href="https://sdp-explorer-production.up.railway.app/swagger-ui.html" target="_blank">Open Swagger Docs</a>
+        </div>
+
+        <div class="link-card">
+          <div class="link-title"><span>✍️</span> Exam Formatter Pro</div>
+          <p>School document creator (Exams, Homework, Landscape Timetables).</p>
+          <a class="link-url" href="https://exam-formatter-pro-production.up.railway.app" target="_blank">https://exam-formatter-pro-production.up.railway.app</a>
+          <a class="btn-action" href="https://exam-formatter-pro-production.up.railway.app" target="_blank">Launch Creator</a>
+        </div>
+      </div>
+
+      <h3>Frontend SPA Routes Directory (SDP Explorer)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Path</th>
+            <th>Type</th>
+            <th>Role Requirement</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code class="inline-code">/</code></td>
+            <td>Public</td>
+            <td>Anonymous / User</td>
+            <td>Dashboard charts and patterns stats.</td>
+          </tr>
+          <tr>
+            <td><code class="inline-code">/login</code></td>
+            <td>Public</td>
+            <td>Anonymous</td>
+            <td>Administration sign-in portal.</td>
+          </tr>
+          <tr>
+            <td><code class="inline-code">/explorer</code></td>
+            <td>Public</td>
+            <td>Anonymous / User</td>
+            <td>Searchable pattern table with details view modal.</td>
+          </tr>
+          <tr>
+            <td><code class="inline-code">/admin</code></td>
+            <td>Protected</td>
+            <td>Admin Only</td>
+            <td>Add, update, or delete patterns (CRUD workspace).</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Swagger -->
+    <section id="swagger">
+      <h2>3. Swagger API Specs</h2>
+      <p>The backend application implements Spring Security & JWT filter interceptors. Below is the list of controllers exposed by the API:</p>
+
+      <h3>Authentication (AuthController)</h3>
+      <p><span class="badge badge-accent">POST</span> <code class="inline-code">/api/auth/login</code></p>
+      <pre><code>// Request Body
+{
+  "email": "admin@systemdesign.com",
+  "password": "admin123"
+}
+
+// Response Body
+{
+  "token": "eyJhbGciOiJIUzI1...",
+  "email": "admin@systemdesign.com",
+  "role": "ADMIN"
+}</code></pre>
+
+      <h3>Patterns Library (PatternController)</h3>
+      <ul>
+        <li><span class="badge badge-primary">GET</span> <code class="inline-code">/api/patterns</code> — Fetches all patterns. (Public)</li>
+        <li><span class="badge badge-primary">GET</span> <code class="inline-code">/api/patterns/{id}</code> — Fetches a single pattern. (Public)</li>
+        <li><span class="badge badge-accent">POST</span> <code class="inline-code">/api/patterns</code> — Creates a pattern. (Admin Only)</li>
+        <li><span class="badge badge-accent">PUT</span> <code class="inline-code">/api/patterns/{id}</code> — Updates a pattern. (Admin Only)</li>
+        <li><span class="badge badge-accent">DELETE</span> <code class="inline-code">/api/patterns/{id}</code> — Deletes a pattern. (Admin Only)</li>
+      </ul>
+    </section>
+
+    <!-- Directory -->
+    <section id="directory">
+      <h2>4. Workspace Directory Map</h2>
+      <pre><code>exam-formatter-pro/
+├── src/                               # --- Exam Formatter Pro (React 19) ---
+│   ├── components/
+│   │   ├── ExamPaperView.tsx          # Exam templates rendering
+│   │   ├── HHWView.tsx                # Holiday Homework styling
+│   │   └── TimetableView.tsx          # Landscape timetable sheets
+│   └── styles.css                     # Main school layout stylesheet
+│
+└── system-design-explorer/            # --- SDP Explorer (Spring Boot + React) ---
+    ├── Dockerfile                     # Multi-stage container instructions
+    ├── backend/                       # --- Spring Boot Backend ---
+    │   ├── src/main/java/com/systemdesign/explorer/
+    │   │   ├── config/
+    │   │   │   ├── SecurityConfig.java # Whitelist & Security Filters
+    │   │   │   └── SpaWebFilter.java   # React Router resource resolver
+    │   │   └── seeder/DataSeeder.java  # Auto-seeds 30 patterns & Admin User
+    └── frontend/                      # --- React Frontend SPA ---
+        ├── vite.config.ts             # Tailwind CSS v4 setup
+        └── src/
+            ├── App.tsx                # Router wrapper with admin checks
+            ├── services/api.ts        # Axios client with automated headers
+            └── pages/
+                ├── Explorer.tsx       # Search panel & glassmorphic details modal
+                └── Admin.tsx          # Admin control board (CRUD forms)</code></pre>
+    </section>
+
+    <!-- Architecture -->
+    <section id="architecture">
+      <h2>5. Core Architecture Details</h2>
+      
+      <h3>SPA Client-Side Routing Fix</h3>
+      <p>To prevent <code>403 Forbidden</code> errors when reloading browser tabs directly on frontend URL routes (<code class="inline-code">/login</code>, <code class="inline-code">/explorer</code>, <code class="inline-code">/admin</code>), we registered these routes in <code class="inline-code">SecurityConfig.java</code> permitAll rules. This allows Spring Web to pass them directly to the resource chain in <code class="inline-code">SpaWebFilter.java</code>, which loads the React entry bundle and lets client-side routing resolve the view.</p>
+
+      <h3>Auto-Seeding Database</h3>
+      <p>On startup, <code class="inline-code">DataSeeder.java</code> checks the JPA database. If empty, it encodes the admin password (<code class="inline-code">admin123</code>) to create the default user and writes 30 production distributed design pattern rows (e.g. Saga Pattern, Horizontal Scaling, CQRS) with details, complexity, and examples.</p>
+    </section>
+
+    <!-- UI Design -->
+    <section id="ui-design">
+      <h2>6. Visual Guidelines (Glassmorphism & Theme)</h2>
+      <p>The visual framework maps HSL tokens in <code class="inline-code">index.css</code> to Tailwind CSS v4 variables inside a custom theme container:</p>
+      <pre><code>@theme {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-primary: hsl(var(--primary));
+}</code></pre>
+      <p>To style container elements with a glass-morphic sheen, apply the following classes:</p>
+      <pre><code>.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}</code></pre>
+    </section>
+  </main>
+
+  <script>
+    // Smooth scrolling active state helper
+    window.addEventListener('DOMContentLoaded', () => {
+      const links = document.querySelectorAll('.nav-item a');
+      const sections = document.querySelectorAll('section');
+
+      window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+          const sectionTop = section.offsetTop - 100;
+          if (pageYOffset >= sectionTop) {
+            current = section.getAttribute('id');
+          }
+        });
+
+        document.querySelectorAll('.nav-item').forEach(li => {
+          li.classList.remove('active');
+          if (li.querySelector('a').getAttribute('href') === '#' + current) {
+            li.classList.add('active');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
