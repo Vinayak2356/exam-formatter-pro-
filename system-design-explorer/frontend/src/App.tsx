@@ -5,6 +5,7 @@ import { Layout } from './components/layout/Layout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Explorer from './pages/Explorer';
+import Admin from './pages/Admin';
 
 function ProtectedRoute({ children, requireAdmin = false }: { children: React.ReactElement, requireAdmin?: boolean }) {
   const { isAuthenticated, role } = useAuth();
@@ -36,6 +37,12 @@ function App() {
           <Route path="/explorer" element={
             <ProtectedRoute>
               <Explorer />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/admin" element={
+            <ProtectedRoute requireAdmin={true}>
+              <Admin />
             </ProtectedRoute>
           } />
 

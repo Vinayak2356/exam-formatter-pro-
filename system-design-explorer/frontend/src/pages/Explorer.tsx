@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { fetchPatterns } from '../services/api';
 import { DesignPattern } from '../types';
-import { Search, Filter, ArrowUpDown, Eye, Download } from 'lucide-react';
+import { Search, Filter, ArrowUpDown, Eye, Download, X } from 'lucide-react';
 
 export default function Explorer() {
   const [patterns, setPatterns] = useState<DesignPattern[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
+  const [selectedPattern, setSelectedPattern] = useState<DesignPattern | null>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
 
   useEffect(() => {
     fetchPatterns().then(data => {
@@ -128,7 +130,13 @@ export default function Explorer() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors">
+                      <button 
+                        onClick={() => {
+                          setSelectedPattern(pattern);
+                          setShowDetailModal(true);
+                        }}
+                        className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                      >
                         <Eye className="h-4 w-4" />
                       </button>
                     </td>
@@ -145,6 +153,75 @@ export default function Explorer() {
           </div>
         )}
       </div>
+
+      {/* Detail Modal */}
+      {showDetailModal && selectedPattern && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-3xl glass rounded-2xl shadow-2xl border border-white/20 overflow-hidden max-h-[85vh] flex flex-col animate-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="p-6 border-b border-border flex items-center justify-between bg-accent/30">
+              <div>
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/20 text-primary border border-primary/30 mb-2">
+                  {selectedPattern.category}
+                </span>
+                <h2 className="text-2xl font-bold text-foreground">{selectedPattern.name}</h2>
+              </div>
+              <button 
+                onClick={() => setShowDetailModal(false)}
+                className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto space-y-6 text-sm">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 bg-emerald-500/5 border border-emerald-500/10 rounded-xl">
+                  <h4 className="font-semibold text-emerald-500 mb-1 flex items-center gap-1.5">
+                    <span>✓</span> Pick It When
+                  </h4>
+                  <p className="text-muted-foreground leading-relaxed">{selectedPattern.pickItWhen}</p>
+                </div>
+                
+                <div className="p-4 bg-rose-500/5 border border-rose-500/10 rounded-xl">
+                  <h4 className="font-semibold text-rose-500 mb-1 flex items-center gap-1.5">
+                    <span>⚠</span> Main Trade-Off
+                  </h4>
+                  <p className="text-muted-foreground leading-relaxed">{selectedPattern.mainTradeOff}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 py-2 border-y border-border">
+                <span className="text-muted-foreground font-medium">Complexity Level:</span>
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${getComplexityColor(selectedPattern.complexityLevel)}`}>
+                  {selectedPattern.complexityLevel}
+                </span>
+              </div>
+
+              <div className="space-y-2">
+                <h4 className="font-semibold text-foreground text-base">Detailed Description & Architecture</h4>
+                <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{selectedPattern.detailDescription}</p>
+              </div>
+
+              <div className="space-y-2">
+                <h4 className="font-semibold text-foreground text-base">Real World Examples</h4>
+                <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{selectedPattern.realWorldExamples}</p>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 bg-accent/25 border-t border-border flex justify-end">
+              <button 
+                onClick={() => setShowDetailModal(false)}
+                className="px-5 py-2 bg-primary text-primary-foreground font-semibold rounded-xl hover:bg-primary/90 transition-all shadow-md shadow-primary/20"
+              >
+                Close View
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
