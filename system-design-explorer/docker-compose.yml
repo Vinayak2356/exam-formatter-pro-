@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  mysqldb:
+    image: mysql:8.0
+    container_name: sdp-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sdp_db
+      MYSQL_USER: sdp_user
+      MYSQL_PASSWORD: sdp_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: sdp-phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysqldb
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysqldb
+
+volumes:
+  db_data:
